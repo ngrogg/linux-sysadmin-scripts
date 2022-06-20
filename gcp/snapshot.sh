@@ -1,9 +1,6 @@
 #!/usr/bin/bash
 
 # This is a bash script designed to take snapshots of GCP instances
-# This script is based off a script by former employee Sebastian Blanchette
-# I highly recommend adding something like the following as an alias:
-# alias gsnap='bash ~/.scripts/snapshot.sh'
 
 # Bash flag variables for the server, why it's being snapshotted, initials of the sysadmin, and the project
 server=$1
@@ -14,8 +11,7 @@ project=$4
 # Help
 if [[ $1 == "help" || $1 == "Help" ]]
 then
-	echo "Usage: gsnap server reason initials project"
-	echo "ex. gsnap womensinternationalpharmacy wpupdate ngg vmr-hipaa"
+	echo "Usage: snapshot server reason initials project"
 	exit
 fi
 
