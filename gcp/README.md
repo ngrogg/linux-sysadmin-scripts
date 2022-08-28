@@ -1,6 +1,7 @@
 # GCP scripts
 
 ## Overview 
+A collection of scripts for servers hosted in the Google Cloud Project.
 
 ## Scripts 
 **diskList.sh**, A BASH script for finding a disk in a project. Takes a server and project as an 

@@ -5,7 +5,7 @@ These are scripts/programs that are only useful in specialized circumstances.
 Copy them over to the servers as needed, adjust comments as required and run the scripts. <br>
 
 ## Scripts 
-**curltest.php**, A php script designed to test curls to an external URL. Primarily used for testing if a firewall is preventing an external connection. 
+**curltest.php**, A php script designed to test curls to an external URL. Primarily used for testing if a firewall is preventing an external connection.
 Usage is a matter of configuring the URL and setting the curl options as true (1) or false (0). The only option that doesn't follow this 
 is if an SSL is required, a filepath will need to be added. <br>
 **dbConTestMysql.php**, A PHP script for testing MySQL connections. Fill out the 
