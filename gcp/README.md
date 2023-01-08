@@ -1,7 +1,7 @@
 # GCP scripts
 
 ## Overview 
-A collection of scripts for servers hosted in the Google Cloud Project.
+A collection of scripts for servers hosted in the Google Cloud Project. Named without .sh as I use them in a `~/bin` folder. <br>
 
 ## Scripts 
 **diskList.sh**, A BASH script for finding a disk in a project. Takes a server and project as an 
