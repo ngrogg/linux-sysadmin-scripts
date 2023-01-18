@@ -15,4 +15,4 @@ database name, user, host and password and run the script. <br>
 the host, port, user, password and addressee. Second section is to fill in the email From, To, Subject and Body. Afterwards run the script. <br>
 **passgen.sh**, a BASH script for generating passwords. Probably not industry shattering, but good enough for most uses.<br>
 **wpUpdate.sh**, a BASH script for updating WordPress sites. Takes a site webroot as an argument. <br>
-`Usage, ./wpUpdate.sh /path/to/webroot`<br>
+Usage, `./wpUpdate.sh /path/to/webroot`<br>

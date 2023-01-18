@@ -1,0 +1,103 @@
+#!/usr/bin/bash
+
+# BASH script to connect to a kubernetes pod
+# Can also be used to configure kubernets 
+# Configured for use with Gcloud SDK
+# By Nicholas Grogg 
+
+# Help function
+function helpFunction(){
+	echo "Help"
+	echo "-----------------------------------------------"
+	echo "Script to configure or connect to kubernetes"
+	echo "Relies on Gcloud SDK"
+	echo ""
+	echo "To configure kubernetes:"
+	echo "kbConnect configure"
+	echo ""
+	echo "To connect to pod:"
+	echo "kbConnect"
+	echo ""
+	echo "To view this help message:"
+	echo "kbConnect help"
+	exit
+}
+
+# Function to configure kubernetes
+function configure(){
+	echo "Kubernetes Configure"
+	echo "-----------------------------------------------"
+	echo ""
+	echo "Installing kubernetes"
+	echo "-----------------------------------------------"
+	## Install Kubernetes via gcloud 
+	gcloud components install kubectl
+
+	echo "Listing kubernetes clusters"
+	echo "-----------------------------------------------"
+	## List kubernetes clusters
+	gcloud container clusters list 
+	echo "Enter project to use from output above"
+	read readInput
+
+	## List kubernetes clusters
+	gcloud container clusters list 
+	echo "Enter zone to use from output above " 
+	read readZone
+
+	echo "Getting kubernetes creds"
+	echo "-----------------------------------------------"
+	## Get credentials for chosen cluster 
+	gcloud container clusters get-credentials $readInput --zone $readZone
+	exit
+}
+
+# Function to run program 
+function runProgram(){
+	## Output pods
+	echo "Kubernetes pods"
+	echo "-----------------------------------------------"
+	kubectl get pods
+
+	echo -e "\n\n"
+
+	## Get pod name
+	echo -e "\n"
+	echo "Copy/Paste pod name to access"
+	echo "-----------------------------------------------"
+	read podName
+
+	kubectl exec -it $podName -- /bin/bash
+}
+
+# Main, parse passed values 
+echo "Kubernetes Connector"
+echo "-----------------------------------------------"
+echo ""
+echo "Checking flags passed"
+echo "-----------------------------------------------"
+echo ""
+
+## Check passed values
+case "$1" in 
+[Hh]elp)
+	echo "Running Help function"
+	echo "-----------------------------------------------"
+	echo ""
+	helpFunction
+	exit
+	;;
+[Cc]onfigure)
+	echo "Running Configure function"
+	echo "-----------------------------------------------"
+	echo ""
+	configure
+	exit
+	;;
+*)
+	echo "Running Kubernetes Connector"
+	echo "-----------------------------------------------"
+	echo ""
+	runProgram
+	;;
+esac
