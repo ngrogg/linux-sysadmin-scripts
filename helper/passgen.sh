@@ -7,7 +7,7 @@
 length=$1
 
 # If no value passed to length, assign a default of 30
-if [ -z $length ]; then
+if [[ -z $length ]]; then
 	length=30
 fi
 

@@ -9,41 +9,34 @@ initials=$3
 project=$4
 
 # Help
-if [[ $1 == "help" || $1 == "Help" ]]
-then
+if [[ $1 == "help" || $1 == "Help" ]]; then
 	echo "Usage: snapshot server reason initials project"
 	exit
 fi
 
 # Check if server was passed, prompt for a server
-if [ -z $server ]
-        then
-         echo -n "what server would you like to snapshot? "
-         read server
+if [[ -z $server ]]; then
+         read -p "What server would you like to snapshot? : " server
 fi
 
 # Fail state
-if [ -z $server ]
-        then
+if [[ -z $server ]]; then
          echo "Server name not provided, bailing!"
          exit 1
 fi
 
 # Why are you taking the snapshot?
-if [ -z $purpose ]
-	then
+if [[ -z $purpose ]]; then
 	read -p "What is the purpose of this snapshot? : " purpose
 fi
 
 # Initials of whoever is taking the snapshot
-if [ -z $initials ]
-	then
+if [[ -z $initials ]]; then
 	read -p "Please enter initials, ex. ngg : " initials
 fi
 
 # What project?
-if [ -z $project ]
-	then
+if [[ -z $project ]]; then
 	gcloud projects list
 	read -p "Please enter the project to use: " project
 fi
@@ -57,11 +50,11 @@ disk_name=$(gcloud compute disks list --project $project | grep $server| awk {'p
 # Take actual snapshot 
 gcloud compute disks snapshot $disk_name --snapshot-names=$initials-$disk_name-$purpose-$(date +"%Y%m%d") --storage-location=us --zone $server_zone --project $project
 
-if [ $? = 0 ]
-        then
-         echo "Have a great day!"
-         exit 0
-        else
-         echo "Something went wrong :("
-         exit 1
+# Check output of command to determine exit message
+if [[ $? = 0 ]]; then
+	echo "Have a great day!"
+	exit 0
+else
+	echo "Something went wrong :("
+	exit 1
 fi
