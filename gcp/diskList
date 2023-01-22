@@ -9,20 +9,17 @@ server=$1
 project=$2
 
 # Help
-if [[ $1 == "help" || $1 == "Help" ]]
-then
+if [[ $1 == "help" || $1 == "Help" ]]; then
 	echo "disklist server project"
 	exit
 fi
 
-if [ -z $server ]
-then
+if [[-z $server ]]; then
 	echo -n "Please enter a server to search for: "
 	read server 
 fi
 
-if [ -z $project ]
-then
+if [[-z $project ]]; then
 	echo =n "Please enter a project to use: "
 	read project
 fi
