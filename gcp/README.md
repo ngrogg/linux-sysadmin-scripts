@@ -15,7 +15,14 @@ Ex. `./snapshot.sh cjfe-welsh wp ngg vmr-hipaa` <br>
 **cloudssh.sh**, A BASH script for connecting to GCP linux servers using the gcloud compute command. 
 Takes a server, zone and project for arguments. <br>
 Usage, `cloudssh server zone project`<br>
-**projectlist.sh**, A BASH script for listing all servers in a GCP project.
+**projectlist.sh**, A BASH script for listing all servers in a GCP project. <br>
 Takes a project as an argument. <br>
 Usage, `projectlist PROJECT`<br>
-
+**gcpRestart**, a BASH script restarting a server in a GCP project. <br> 
+Takes a hostname, zone and project as arguments <br>
+Usage, `gcpRestart HOSTNAME ZONE PROJECT` <br>
+**kbConnect**, a BASH script for connecting or configuring Kubernetes in GCP <br>
+To configure Kubernetes <br>
+Usage, `kbConnect configure` <br>
+To connect to Kubernetes pod <br>
+Usage, `kbConnect` <br>

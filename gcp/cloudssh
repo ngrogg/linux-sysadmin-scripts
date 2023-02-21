@@ -18,7 +18,7 @@ if [[-z $project ]]; then
 	read project
 fi
 
-if [[-z $zone ]] then
+if [[-z $zone ]]; then
 	gcloud compute zones list
 	echo -n "Please enter a zone to use: "
 	read zone
