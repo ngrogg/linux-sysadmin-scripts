@@ -14,11 +14,19 @@ and configured on computer. Details on installation/configuration in script comm
 * **gcpRestart**, a BASH script restarting a server in a GCP project. <br>
 Takes a hostname, zone and project as arguments <br>
 Usage, `gcpRestart HOSTNAME ZONE PROJECT` <br>
-* **kbConnect**, a BASH script for connecting or configuring Kubernetes in GCP <br>
-To configure Kubernetes <br>
-Usage, `kbConnect` <br>
-To connect to Kubernetes pod <br>
-Usage, `kbConnect configure` <br>
+* **kbConnect**, a BASH script for connecting or listing Kubernetes Pods in GCP <br>
+To list all pods in a project pass the 'pods' argument. Can also look for
+a specific pod by passing part of it's alias.<br>
+Usage, `./kbConnect pods` <br>
+Usage, `./kbConnect pods ALIAS` <br>
+To list all ingress public IPs pass the 'ingress' argument.
+Can pass an alias to look for a specific pods public IP. <br>
+Usage, `./kbConnect ingress` <br>
+Usage, `./kbConnect ingress ALIAS` <br>
+To connect to a pod pass the 'connect' argument and the pod alias.
+Passing the connect argument without passing an alias will list all the pod aliases. Copy/Paste the alias to connect from list.<br>
+Usage, `./kbConnect connect` <br>
+Usage, `./kbConnect connect POD` <br>
 * **projectlist**, A BASH script for listing all servers in a GCP project. <br>
 Takes a project as an argument. <br>
 Usage, `projectlist PROJECT`<br>

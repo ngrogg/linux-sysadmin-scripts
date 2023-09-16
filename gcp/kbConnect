@@ -1,103 +1,127 @@
 #!/usr/bin/bash
 
-# BASH script to connect to a kubernetes pod
-# Can also be used to configure kubernets 
-# Configured for use with Gcloud SDK
-# By Nicholas Grogg 
+# kbConnect
+# This script is designed to interact with Kubectl containers using gcloud tools
+# By Nicholas Grogg
 
-# Help function
+## Help function
 function helpFunction(){
-	echo "Help"
-	echo "-----------------------------------------------"
-	echo "Script to configure or connect to kubernetes"
-	echo "Relies on Gcloud SDK"
-	echo ""
-	echo "To configure kubernetes:"
-	echo "kbConnect configure"
-	echo ""
-	echo "To connect to pod:"
-	echo "kbConnect"
-	echo ""
-	echo "To view this help message:"
-	echo "kbConnect help"
-	exit
+	printf '%s\n' \
+	'Help' \
+	'----------------------------------------------------' \
+	' ' \
+	'help/Help' \
+	'* Display this help message and exit' \
+	' ' \
+	'pods/Pods' \
+	'* List all pods' \
+	'* Can filter out a specific pod' \
+	'Ex. ./kbConnect pods' \
+	'Ex. ./kbConnect pods ALIAS ' \
+	' ' \
+	'ingress/Ingress' \
+	'* List pod domains and public IPs' \
+	'* Can filter out a specific pod' \
+	'Ex. ./kbConnect ingress' \
+	'Ex. ./kbConnect ingress ALIAS' \
+	' ' \
+	'connect/Connect' \
+	'* Connect to pod' \
+	'* Lists all pods before for easy copying' \
+	'* Can provide a pod name to connect directly' \
+	'Ex. ./kbConnect connect' \
+	'Ex. ./kbConnect connect POD'
 }
 
-# Function to configure kubernetes
-function configure(){
-	echo "Kubernetes Configure"
-	echo "-----------------------------------------------"
-	echo ""
-	echo "Installing kubernetes"
-	echo "-----------------------------------------------"
-	## Install Kubernetes via gcloud 
-	gcloud components install kubectl
+## Function to list all pods
+function pods(){
+	printf '%s\n' \
+	'Pods' \
+	'----------------------------------------------------'
 
-	echo "Listing kubernetes clusters"
-	echo "-----------------------------------------------"
-	## List kubernetes clusters
-	gcloud container clusters list 
-	echo "Enter project to use from output above"
-	read readInput
-
-	## List kubernetes clusters
-	gcloud container clusters list 
-	echo "Enter zone to use from output above " 
-	read readZone
-
-	echo "Getting kubernetes creds"
-	echo "-----------------------------------------------"
-	## Get credentials for chosen cluster 
-	gcloud container clusters get-credentials $readInput --zone $readZone
-	exit
+	if [ -z $1 ]; then
+		kubectl get pods
+	else
+		kubectl get pods | grep $1
+	fi
 }
 
-# Function to run program 
-function runProgram(){
-	## Output pods
-	echo "Kubernetes pods"
-	echo "-----------------------------------------------"
-	kubectl get pods
+## Function to list pod A records
+function ingress(){
+	printf '%s\n' \
+	'Ingress' \
+	'----------------------------------------------------'
 
-	echo -e "\n\n"
-
-	## Get pod name
-	echo -e "\n"
-	echo "Copy/Paste pod name to access"
-	echo "-----------------------------------------------"
-	read podName
-
-	kubectl exec -it $podName -- /bin/bash
+	if [ -z $1 ]; then
+		kubectl get ingress
+	else
+		kubectl get ingress | grep $1
+	fi
 }
 
-# Main, parse passed values 
-echo "Kubernetes Connector"
-echo "-----------------------------------------------"
-echo ""
-echo "Checking flags passed"
-echo "-----------------------------------------------"
-echo ""
+## Function to connect to pod
+function connect(){
+	printf '%s\n' \
+	'Connect' \
+	'----------------------------------------------------'
+	if [ -z $1 ]; then
+		# Output pods
+		kubectl get pods
 
-## Check passed values
-case "$1" in 
+		# Get pod name
+		printf '%s\n' \
+		'Copy/Paste pod name to access' \
+		'----------------------------------------------------'
+		read podName
+
+		kubectl exec -it $podName -- /bin/bash
+	else
+		kubectl exec -it $1 -- /bin/bash
+	fi
+}
+
+## Main, read passed flags
+	printf '%s\n' \
+	'kbConnect' \
+	'----------------------------------------------------' \
+	' ' \
+	'Checking flags passed' \
+	'----------------------------------------------------'
+
+## Check passed flags
+case "$1" in
 [Hh]elp)
-	echo "Running Help function"
-	echo "-----------------------------------------------"
-	echo ""
+	printf '%s\n' \
+	'Running Help function' \
+	'----------------------------------------------------'
 	helpFunction
 	exit
 	;;
-[Cc]onfigure)
-	echo "Running Configure function"
-	echo "-----------------------------------------------"
-	echo ""
-	configure
-	exit
+[Pp]ods)
+	printf '%s\n' \
+	'Listing pods' \
+	'----------------------------------------------------'
+	pods $2
+	;;
+[Ii]ngress)
+	printf '%s\n' \
+	'Listing Ingress' \
+	'----------------------------------------------------'
+	ingress $2
+	;;
+[Cc]onnect)
+	printf '%s\n' \
+	'Connecting to pod' \
+	'----------------------------------------------------'
+	connect $2
 	;;
 *)
-	echo "Running Kubernetes Connector"
-	echo "-----------------------------------------------"
-	echo ""
-	runProgram
+	printf '%s\n' \
+	'ISSUE DETECTED - Invalid input detected!' \
+	'----------------------------------------------------' \
+	'Running help script and exiting.' \
+	'Re-run script with valid input'
+	helpFunction
+	exit
 	;;
 esac
