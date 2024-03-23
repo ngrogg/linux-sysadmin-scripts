@@ -17,7 +17,7 @@ function helpFunction(){
 	'* Check system logs for Structure needs cleaning message' \
 	'* If message found sends ticket to provided address' \
 	'* Pass email address and recipient as argument' \
-    'Usage, ./structureCheck.sh check SENDER RECIPIENT'
+    'Usage, ./structureCheck.sh check sender recipient'
 }
 
 ## Function to run program
@@ -56,7 +56,7 @@ function runProgram(){
 	if [[ "$check" -gt "0" ]]; then
 		echo "$check instance(s) of structure needs cleaning message found in server $(hostname) syslog, review required" | mail -s "Structure needs cleaning message found on $(hostname)" -r"$1" $2
 
-		#### Create file to prevent new tickets from constantly being opened by cron
+		#### Create file to prevent emails from constantly being sent by cron
 		echo "$(date)" >> /root/notified.txt
 	fi
 }

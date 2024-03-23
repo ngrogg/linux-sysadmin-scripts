@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# A BASH script to update WordPress 
+# A BASH script to update WordPress
 # Takes a filepath as an argument
 # By Nicholas Grogg
 
@@ -10,12 +10,12 @@ function helpFunction(){
 	echo "-----------------------------------------------"
 	echo "Script to update WordPress sites"
 	echo "Takes a filepath as an argument"
-	echo "Usage: wpUpdate.sh FILEPATH"
+	echo "Usage: wpUpdate.sh filepath"
 	echo "Ex. ./wpUpdate.sh /var/www/html"
 	exit
 }
 
-# Function to run program 
+# Function to run program
 function runProgram(){
 	## Checks
 	echo "Pre-flight checks"
@@ -49,11 +49,11 @@ function runProgram(){
 		exit
 	fi
 
-	## Update site 
-	### Navigate to webroot 
+	## Update site
+	### Navigate to webroot
 	cd $filePath
 
-	### Check if wp-cli installed 
+	### Check if wp-cli installed
 	#### If wp-cli doesn't exist
 	if [ ! -f "/usr/bin/wp" ]; then
 		echo "wp-cli not installed, installing"
@@ -103,7 +103,7 @@ function runProgram(){
 
 }
 
-# Main, parse passed values 
+# Main, parse passed values
 echo "WordPress Updater"
 echo "-----------------------------------------------"
 echo ""
@@ -112,7 +112,7 @@ echo "-----------------------------------------------"
 echo ""
 
 ## Check passed values
-case "$1" in 
+case "$1" in
 [Hh]elp)
 	echo "Running Help function"
 	echo "-----------------------------------------------"
