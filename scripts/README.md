@@ -21,5 +21,14 @@ Copy them over to the servers as needed, adjust comments as required and run the
 * **structureCheck.sh**, A BASH script for checking for disk corruption on a server.
   Takes a sender email and recipient as arugments. <br>
   Usage, `./structureCheck.sh check SENDER@email.com RECIPIENT@email.com` <br>
+* **wpInstall.sh**, a BASH script for installing WordPress on a Linux server. Has a "Web" and "Database" function in case
+  the site and database are on separate servers. <br>
+  For Web Server configuration: <br>
+  Usage, `./wpInstall.sh web docroot` <br>
+  Ex. `./wpInstall.sh web /var/www/site.com` <br>
+  For Database Server configuration: <br>
+  Usage, `./wpInstall.sh webIP databaseName databaseUser` <br>
+  Ex. `./wpInstall.sh 10.10.0.1 site_com site_user` <br>
+  For servers where the site and database files are on the same server pass localhost or 127.0.0.1 for the web server IP. <br>
 * **wpUpdate.sh**, a BASH script for updating WordPress sites. Takes a site webroot as an argument. <br>
   Usage, `./wpUpdate.sh /path/to/webroot`<br>
