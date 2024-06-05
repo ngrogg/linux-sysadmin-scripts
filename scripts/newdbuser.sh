@@ -23,7 +23,7 @@ function helpFunction(){
 	"* Create MySQL user" \
 	"* Takes a username and IP as arguments" \
     "* Creates a username with near root permissions for management" \
-	"Usage. ./newdbuser.sh create username welsh_ip" \
+	"Usage. ./newdbuser.sh create username web_ip" \
 	"Ex. ./newdbuser.sh create jdoe 10.138.1.2"
 }
 
@@ -35,11 +35,12 @@ function runProgram(){
 
     ## Variables
     databaseUser=$1
-    welshIP=$2
+    webIP=$2
 
-    #TODO
     ### Read in password
-    #databasePass
+    stty -echo
+    read -s -p "Password: " databasePass
+    stty echo
 
     ## Validation for username/IP, checking if user is root
         ### Is script running as root?
@@ -74,12 +75,12 @@ function runProgram(){
         exit 1
     fi
 
-    ### Check if welsh IP was passed
-    if [[ -z $welshIP ]]; then
+    ### Check if web IP was passed
+    if [[ -z $webIP ]]; then
 	    printf "%s\n" \
-        "${red}ISSUE DETECTED - A Welsh IP wasn't passed!"  \
+        "${red}ISSUE DETECTED - A Web IP wasn't passed!"  \
 	    "----------------------------------------------------" \
-        "Script needs a Welsh IP for database user" \
+        "Script needs a Web IP for database user" \
         "Running help function and exiting!${normal}" \
         " "
 
@@ -92,7 +93,7 @@ function runProgram(){
 	"${yellow}IMPORTANT: Value Confirmation" \
 	"----------------------------------------------------" \
     "Database User: " "$databaseUser" \
-    "Welsh IP: " "$welshIP" \
+    "Web IP: " "$webIP" \
 	"If all clear, press enter to proceed or ctrl-c to cancel${normal}" \
 	" "
     read junkInput
@@ -104,11 +105,11 @@ function runProgram(){
     userPass+="!"
 
     #### Create user
-    mysql -u root -p"$databasePass" -e "CREATE USER $databaseUser@$welshIP IDENTIFIED BY \"$userPass\""
+    mysql -u root -p"$databasePass" -e "CREATE USER $databaseUser@$webIP IDENTIFIED BY \"$userPass\""
 
     ## Grant permissions
     ### Grant user permissions
-    mysql -u root -p"$databasePass" -e "GRANT ALL ON *.* TO $databaseUser@$welshIP"
+    mysql -u root -p"$databasePass" -e "GRANT ALL ON *.* TO $databaseUser@$webIP"
 
     ### Flush Privileges
     mysql -u root -p"$databasePass" -e "FLUSH PRIVILEGES"
