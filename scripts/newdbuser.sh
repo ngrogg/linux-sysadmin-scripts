@@ -39,8 +39,10 @@ function runProgram(){
     webIP=$2
 
     ### Read in password
+    read -s -p "MySQL user being used to create new user: " creatorUser
+
     stty -echo
-    read -s -p "Password: " databasePass
+    read -s -p "MySQL Password for user above: " creatorPass
     stty echo
 
     ## Validation for username/IP, checking if user is root
@@ -106,21 +108,21 @@ function runProgram(){
     userPass+="!"
 
     #### Create user
-    mysql -u root -p"$databasePass" -e "CREATE USER $databaseUser@$webIP IDENTIFIED BY \"$userPass\""
+    mysql -u $creatorUser -p"$creatorPass" -e "CREATE USER $databaseUser@$webIP IDENTIFIED BY \"$userPass\""
 
     ## Grant permissions
     ### Grant user permissions
-    mysql -u root -p"$databasePass" -e "GRANT ALL ON *.* TO $databaseUser@$webIP"
+    mysql -u $creatorUser -p"$creatorPass" -e "GRANT ALL ON *.* TO $databaseUser@$webIP"
 
     ### Flush Privileges
-    mysql -u root -p"$databasePass" -e "FLUSH PRIVILEGES"
+    mysql -u $creatorUser -p"$creatorPass" -e "FLUSH PRIVILEGES"
 
 	printf "%s\n" \
 	"${yellow}IMPORTANT: User created" \
 	"----------------------------------------------------" \
     "Database User: " "$databaseUser" \
     "Web IP: " "$webIP" \
-    "Password: " "$databasePass" \
+    "Password: " "$userPass" \
     " " \
     "Note user info, it will not be saved on the server!"
 	"Press enter to proceed once info saved${normal}" \
