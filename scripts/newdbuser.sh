@@ -25,6 +25,7 @@ function helpFunction(){
     "* Creates a username with near root permissions for management" \
 	"Usage. ./newdbuser.sh create username web_ip" \
 	"Ex. ./newdbuser.sh create jdoe 10.138.1.2"
+	"Ex. ./newdbuser.sh create jdoe 127.0.0.1"
 }
 
 # Function to run program
@@ -115,10 +116,11 @@ function runProgram(){
     mysql -u root -p"$databasePass" -e "FLUSH PRIVILEGES"
 
     ## Log username/password, output to screen
-    echo "$(date)" >> /root/WordPressOutput.log
+    echo "$(date)" >> /root/newdbuserOutput.log
     echo "Username: $databaseUser" >> /root/newdbuserOutput.log
     echo "Password: $userPass" >> /root/newdbuserOutput.log
 
+    ## Output last three lines of output file
     tail -n 3 /root/newdbuserOutput.log
 
 }

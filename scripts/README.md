@@ -15,7 +15,12 @@ Copy them over to the servers as needed, adjust comments as required and run the
 * **smtpTest.pl**, A perl script for testing SMTP connections on a server. Two sections to fill out.
   First is the SMTP server section, which includes the host, port, user, password and addressee.
   Second section is to fill in the email From, To, Subject and Body. Afterwards run the script. <br>
+* **newdbuser.sh**, a BASH script for creating MySQL users. Takes a username and IP as an argument. <br>
+  Usage, `./newdbuser.sh create USERNAME IP` <br>
+  Ex. `./newdbuser.sh create jdoe 10.138.0.2` <br>
+  Ex. `./newdbuser.sh create jdoe 127.0.0.1` <br>
 * **passgen.sh**, a BASH script for generating passwords. Probably not industry shattering, but good enough for most uses.<br>
+  Usage, just run the script. <br>
 * **structureCheck.py**, A Python script for cron folders like `/etc/cron.daily` used to launch the structureCheck.sh script below. <br>
   Usage, just run the script. <br>
 * **structureCheck.sh**, A BASH script for checking for disk corruption on a server.
