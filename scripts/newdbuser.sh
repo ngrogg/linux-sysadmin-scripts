@@ -115,13 +115,17 @@ function runProgram(){
     ### Flush Privileges
     mysql -u root -p"$databasePass" -e "FLUSH PRIVILEGES"
 
-    ## Log username/password, output to screen
-    echo "$(date)" >> /root/newdbuserOutput.log
-    echo "Username: $databaseUser" >> /root/newdbuserOutput.log
-    echo "Password: $userPass" >> /root/newdbuserOutput.log
-
-    ## Output last three lines of output file
-    tail -n 3 /root/newdbuserOutput.log
+	printf "%s\n" \
+	"${yellow}IMPORTANT: User created" \
+	"----------------------------------------------------" \
+    "Database User: " "$databaseUser" \
+    "Web IP: " "$webIP" \
+    "Password: " "$databasePass" \
+    " " \
+    "Note user info, it will not be saved on the server!"
+	"Press enter to proceed once info saved${normal}" \
+	" "
+    read junkInput
 
 }
 
