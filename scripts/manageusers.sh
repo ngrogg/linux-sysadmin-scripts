@@ -106,8 +106,25 @@ function addUser(){
     useradd -aG adm $username
 
     ### Validate sudoer file if user created with sudo perms
+    #### Add user to sudoer file
     if [[ "$addAdmin" == "Yes" ]]; then
            echo "$username ALL=(ALL)ALL" >> /etc/sudoers.d/users
+
+           ##### Check sudoer file for validity
+           validFile=$(visudo -cf /etc/sudoers.d/users)
+           if [[ $(echo $validFile | grep OK) ]]; then
+	            printf "%s\n" \
+                "Sudoer File valid!" \
+	            "----------------------------------------------------" \
+                " "
+           else
+	            printf "%s\n" \
+                "${red}ISSUE DETECTED - Error in sudoer file!" \
+	            "----------------------------------------------------" \
+                "File moved to /tmp/users_REVIEW for review!"
+                mv /etc/sudoers.d/users /tmp/users_REVIEW
+           fi
+
     fi
 
     ### Final steps
@@ -118,7 +135,7 @@ function addUser(){
     "Note the password below: " "$userPass" \
     " " \
     "This will not be saved on the server" \
-    "Note or set a password and press enter when complete${normal}"
+    "Note or set a different password and press enter when complete${normal}"
 	" "
 
     read junkInput
