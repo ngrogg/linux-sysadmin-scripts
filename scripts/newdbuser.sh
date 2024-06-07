@@ -46,7 +46,7 @@ function runProgram(){
     stty echo
 
     ## Validation for username/IP, checking if user is root
-        ### Is script running as root?
+    ### Is script running as root?
 	printf "%s\n" \
 	"Checking if user is root "\
 	"----------------------------------------------------" \
