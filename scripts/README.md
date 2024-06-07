@@ -12,15 +12,23 @@ Copy them over to the servers as needed, adjust comments as required and run the
 * **dbConTestMysql.php**, A PHP script for testing MySQL connections. Fill out the
   database name, user, host and password and run the script. <br>
 * **dbConTestPsql.php**, Same as the MySQL script but for Postgres. <br>
-* **smtpTest.pl**, A perl script for testing SMTP connections on a server. Two sections to fill out.
-  First is the SMTP server section, which includes the host, port, user, password and addressee.
-  Second section is to fill in the email From, To, Subject and Body. Afterwards run the script. <br>
+* **manageruser.sh**, a BASH script for creating or removing SSH users. Takes an action and username as arguments. <br>
+  Usage, `./manageruser.sh ACTION USERNAME` <br>
+  Creating users can choose to grant sudo permissions by adding the "admin" word to user creation argument: <br>
+  Ex. `./manageruser.sh create jdoe admin` <br>
+  Running the script without this will create a non-admin user. <br>
+  Removing users can choose to remove the user's home directory by adding the "home" word to user removal argument: <br>
+  Ex. `./manageruser.sh remove jdoe home` <br>
+  Running the script without this will leave the user's home directory intact. <br>
 * **newdbuser.sh**, a BASH script for creating MySQL users. Takes a username and IP as an argument. <br>
   Usage, `./newdbuser.sh create USERNAME IP` <br>
   Ex. `./newdbuser.sh create jdoe 10.138.0.2` <br>
   Ex. `./newdbuser.sh create jdoe 127.0.0.1` <br>
 * **passgen.sh**, a BASH script for generating passwords. Probably not industry shattering, but good enough for most uses.<br>
   Usage, just run the script. <br>
+* **smtpTest.pl**, A perl script for testing SMTP connections on a server. Two sections to fill out.
+  First is the SMTP server section, which includes the host, port, user, password and addressee.
+  Second section is to fill in the email From, To, Subject and Body. Afterwards run the script. <br>
 * **structureCheck.py**, A Python script for cron folders like `/etc/cron.daily` used to launch the structureCheck.sh script below. <br>
   Usage, just run the script. <br>
 * **structureCheck.sh**, A BASH script for checking for disk corruption on a server.
