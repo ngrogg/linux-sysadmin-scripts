@@ -40,14 +40,88 @@ function addUser(){
 	"Adding User" \
 	"----------------------------------------------------"
     ### Variables
+    #### Username to add
+    username=$1
+
+    #### Check if Admin value was passed
+    if [[ $2 =~ [Aa]+[Dd]+[Mm]+[Ii]+[Nn] ]]; then
+            addAdmin="yes"
+    else
+            addAdmin="no"
+    fi
+
     ### Validate user input
     #### Is user root?
+	printf "%s\n" \
+	"Checking if user is root "\
+	"----------------------------------------------------" \
+	" "
+	if [[ "$EUID" -eq 0 ]]; then
+		printf "%s\n" \
+		"${green}User is root "\
+		"----------------------------------------------------" \
+		"Proceeding${normal}" \
+		" "
+	else
+		printf "%s\n" \
+		"${red}ISSUE DETECTED - User is NOT root "\
+		"----------------------------------------------------" \
+		"Re-run script as root${normal}"
+		exit 1
+	fi
+
     #### Does user already exist?
+    if [[ $(grep -c "$username" /etc/passwd) ]]; then
+            printf "%s\n" \
+            "${red}ISSUE DETECTED - User already exists!" \
+            "----------------------------------------------------" \
+            "Username already taken, try another username!${normal}"
+            exit 1
+    fi
+
     ### Confirmation
+	printf "%s\n" \
+	"${yellow}IMPORTANT: Value Confirmation" \
+	"----------------------------------------------------" \
+    "Username to add: " "$username" \
+    "Should user be admin?: " "$addAdmin" \
+	"If all clear, press enter to proceed or ctrl-c to cancel${normal}" \
+	" "
+
+    read junkInput
+
     ### Add user
+    useradd -m $username -s /usr/bin/bash
+
     ### Set password
-    ### Add user to groups
+    #### Generate a random string for a password
+    userPass=$(date +%s | sha256sum | base64 | head -c 30)
+    userPass+=$(((RANDOM%1000+1)))
+    userPass+="!"
+
+    #### Set password for user
+    echo "$userPass" | passwd $username --stdin
+
+    ### Add user to groups, expand as needed for user configuration
+    useradd -aG adm $username
+
     ### Validate sudoer file if user created with sudo perms
+    if [[ "$addAdmin" == "Yes" ]]; then
+           echo "$username ALL=(ALL)ALL" >> /etc/sudoers.d/users
+    fi
+
+    ### Final steps
+	printf "%s\n" \
+	"${yellow}IMPORTANT: Final Steps" \
+	"----------------------------------------------------" \
+    "Following user created: " "$username" \
+    "Note the password below: " "$userPass" \
+    " " \
+    "This will not be saved on the server" \
+    "Note or set a password and press enter when complete${normal}"
+	" "
+
+    read junkInput
 }
 
 ## Function to remove user
@@ -87,11 +161,11 @@ function removeUser(){
 	fi
 
     #### Does user exist?
-    if [[ $(grep -c "$username" /etc/passwd) ]]; then
+    if [[ ! $(grep -c "$username" /etc/passwd) ]]; then
             printf "%s\n" \
-            "${red}ISSUE DETECTED - User already exists!" \
+            "${red}ISSUE DETECTED - User doesn't exist!" \
             "----------------------------------------------------" \
-            "Username already taken, try another username!${normal}"
+            "Username doesn't exist, cannot remove!${normal}"
             exit 1
 
     fi
