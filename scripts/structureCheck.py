@@ -5,5 +5,5 @@ import os
 # Launches the structureCheck.sh script
 # By Nicholas Grogg
 
-# TODO: Update URL before placing in /etc/cron.daily or whatever filepath
+# TODO: Update filepath before placing in /etc/cron.daily or whatever cron timing is used
 os.system("bash /path/to/structureCheck.sh check")
