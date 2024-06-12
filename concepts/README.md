@@ -12,6 +12,3 @@ A collection of scripts that are for demonstarting specific BASH functions
   Usage, `./cases.sh INPUT` <br>
 * **for.sh**, A script to demonstrate BASH for loops. <br>
   Usage, just run the script
-* **newUser.py**, Python script for adding new users. In-progress work-effort. Note TODO comments.
-  Usage, Takes an action and a username as an argument. <br>
-  Ex. `./newUser.py newuser jdoe`
