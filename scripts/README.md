@@ -12,6 +12,7 @@ Copy them over to the servers as needed, adjust comments as required and run the
 * **dbConTestMysql.php**, A PHP script for testing MySQL connections. Fill out the
   database name, user, host and password and run the script. <br>
 * **dbConTestPsql.php**, Same as the MySQL script but for Postgres. <br>
+* **diskPinger**, scripts for monitoring disk space on a server.
 * **manageruser.sh**, a BASH script for creating or removing SSH users. Takes an action and username as arguments. <br>
   Usage, `./manageruser.sh ACTION USERNAME` <br>
   Creating users can choose to grant sudo permissions by adding the "admin" word to user creation argument: <br>
@@ -29,11 +30,7 @@ Copy them over to the servers as needed, adjust comments as required and run the
 * **smtpTest.pl**, A perl script for testing SMTP connections on a server. Two sections to fill out.
   First is the SMTP server section, which includes the host, port, user, password and addressee.
   Second section is to fill in the email From, To, Subject and Body. Afterwards run the script. <br>
-* **structureCheck.py**, A Python script for cron folders like `/etc/cron.daily` used to launch the structureCheck.sh script below. <br>
-  Usage, just run the script. <br>
-* **structureCheck.sh**, A BASH script for checking for disk corruption on a server.
-  Takes a sender email and recipient as arugments. <br>
-  Usage, `./structureCheck.sh check SENDER@email.com RECIPIENT@email.com` <br>
+* **structureCheck**, scripts for checking for disk corruption on a server. See README.md in folder.
 * **wpInstall.sh**, a BASH script for installing WordPress on a Linux server. Has a "Web" and "Database" function in case
   the site and database are on separate servers. <br>
   For Web Server configuration: <br>
