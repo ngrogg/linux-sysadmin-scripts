@@ -5,5 +5,5 @@ import os
 # Goes in /etc/cron.whatever to trigger the diskPinger.sh script
 # By Nicholas Grogg
 
-# TODO: Update path before deploying
-os.system("bash /path/to/diskPinger.sh check")
+# TODO: Update values before deploying
+os.system("bash /path/to/diskPinger.sh check FILEPATH EMAIL THRESHOLD")
