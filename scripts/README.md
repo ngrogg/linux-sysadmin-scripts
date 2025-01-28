@@ -13,6 +13,10 @@ Copy them over to the servers as needed, adjust comments as required and run the
   database name, user, host and password and run the script. <br>
 * **dbConTestPsql.php**, Same as the MySQL script but for Postgres. <br>
 * **diskPinger**, scripts for monitoring disk space on a server.
+* **fpmStatus.php**, PHP script for viewing php-fpm info for page. Place in doc root and call via curl: `curl domain.com/fpmStatus.php` <br>
+  Don't forget to remove afterwards! <br>
+* **loginBackup.sh**, a BASH script for backing up `/etc/shadow` and `/etc/passwd`. Keeps backups for a week, removes older backups. <br>
+  Usage, just run the script. Designed for cron. <br>
 * **manageruser.sh**, a BASH script for creating or removing SSH users. Takes an action and username as arguments. <br>
   Usage, `./manageruser.sh ACTION USERNAME` <br>
   Creating users can choose to grant sudo permissions by adding the "admin" word to user creation argument: <br>
