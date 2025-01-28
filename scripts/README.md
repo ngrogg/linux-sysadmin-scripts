@@ -21,10 +21,11 @@ Copy them over to the servers as needed, adjust comments as required and run the
   Removing users can choose to remove the user's home directory by adding the "home" word to user removal argument: <br>
   Ex. `./manageruser.sh remove jdoe home` <br>
   Running the script without this will leave the user's home directory intact. <br>
-* **newdbuser.sh**, a BASH script for creating MySQL users. Takes a username and IP as an argument. <br>
-  Usage, `./newdbuser.sh create USERNAME IP` <br>
-  Ex. `./newdbuser.sh create jdoe 10.138.0.2` <br>
-  Ex. `./newdbuser.sh create jdoe 127.0.0.1` <br>
+* **newMysqlUser.sh**, a BASH script for creating MySQL users. Takes a username and IP as an argument. <br>
+  Usage, `./newMysqlUser.sh create USERNAME IP` <br>
+  Ex. `./newMysqlUser.sh create jdoe 10.138.0.2` <br>
+  Ex. `./newMysqlUser.sh create jdoe 127.0.0.1` <br>
+  Ex. `./newMysqlUser.sh create jdoe localhost` <br>
 * **passgen.sh**, a BASH script for generating passwords. Probably not industry shattering, but good enough for most uses.<br>
   Usage, just run the script. <br>
 * **smtpTest.pl**, A perl script for testing SMTP connections on a server. Two sections to fill out.
