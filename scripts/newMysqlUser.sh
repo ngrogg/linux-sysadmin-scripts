@@ -118,6 +118,26 @@ function runProgram(){
     read -s -p "MySQL Password for user above: " creatorPass
     stty echo
 
+    ## Check if user exists
+    ### Run query
+    checkQuery=$(mysql -u root -p"$databasePass" -e "SELECT user,host FROM mysql.user WHERE user like \"$databaseUser\" AND host like \"$welshIP\"")
+
+    ### Check if checkQuery null or not, exit if so
+    if [[ $checkQuery ]]; then
+        printf "%s\n" \
+        "${red}ISSUE DETECTED - User already exists!"  \
+        "----------------------------------------------------" \
+        "Exiting!${normal}" \
+        " "
+        exit 1
+    else
+        printf "%s\n" \
+        "${green}User doesn't exist"\
+        "----------------------------------------------------" \
+        "Proceeding${normal}" \
+        " "
+    fi
+
     ## Create user
     ### Generate a user password
     userPass=$(date +%s | sha256sum | base64 | head -c 30)
