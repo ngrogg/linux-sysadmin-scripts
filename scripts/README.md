@@ -25,6 +25,11 @@ Copy them over to the servers as needed, adjust comments as required and run the
   Removing users can choose to remove the user's home directory by adding the "home" word to user removal argument: <br>
   Ex. `./manageruser.sh remove jdoe home` <br>
   Running the script without this will leave the user's home directory intact. <br>
+* **lockMysqlUser.sh**, a BASH script for locking MySQL users. Takes a username and IP as an argument. <br>
+  Usage, `./lockMysqlUser.sh lock USERNAME IP` <br>
+  Ex. `./lockMysqlUser.sh lock jdoe 10.138.0.2` <br>
+  Ex. `./lockMysqlUser.sh lock jdoe 127.0.0.1` <br>
+  Ex. `./lockMysqlUser.sh lock jdoe localhost` <br>
 * **newMysqlUser.sh**, a BASH script for creating MySQL users. Takes a username and IP as an argument. <br>
   Usage, `./newMysqlUser.sh create USERNAME IP` <br>
   Ex. `./newMysqlUser.sh create jdoe 10.138.0.2` <br>
