@@ -61,7 +61,7 @@ function runProgram(){
     fi
 
     ### Check if MySQL/MariaDB installed
-    if [[ ! -f $(which mysql) || ! -f $(which mariadb) ]]; then
+    if [[ ! -f $(which mysql) && ! -f $(which mariadb) ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - MySQL/MariaDB not found! "\
         "----------------------------------------------------" \
