@@ -17,14 +17,6 @@ Copy them over to the servers as needed, adjust comments as required and run the
   Don't forget to remove afterwards! <br>
 * **loginBackup.sh**, a BASH script for backing up `/etc/shadow` and `/etc/passwd`. Keeps backups for a week, removes older backups. <br>
   Usage, just run the script. Designed for cron. <br>
-* **manageruser.sh**, a BASH script for creating or removing SSH users. Takes an action and username as arguments. <br>
-  Usage, `./manageruser.sh ACTION USERNAME` <br>
-  Creating users can choose to grant sudo permissions by adding the "admin" word to user creation argument: <br>
-  Ex. `./manageruser.sh create jdoe admin` <br>
-  Running the script without this will create a non-admin user. <br>
-  Removing users can choose to remove the user's home directory by adding the "home" word to user removal argument: <br>
-  Ex. `./manageruser.sh remove jdoe home` <br>
-  Running the script without this will leave the user's home directory intact. <br>
 * **lockMysqlUser.sh**, a BASH script for locking MySQL users. Takes a username and IP as an argument. <br>
   Usage, `./lockMysqlUser.sh lock USERNAME IP` <br>
   Ex. `./lockMysqlUser.sh lock jdoe 10.138.0.2` <br>
@@ -41,6 +33,21 @@ Copy them over to the servers as needed, adjust comments as required and run the
   First is the SMTP server section, which includes the host, port, user, password and addressee.
   Second section is to fill in the email From, To, Subject and Body. Afterwards run the script. <br>
 * **structureCheck**, scripts for checking for disk corruption on a server. See README.md in folder.
+* **userCreation.sh**, A BASH script for creating users on Linux servers. <br>
+  Arguments:
+  - add/Add <br>
+    Add SSH user <br>
+    Pass admin for sudo permissions <br>
+    Usage. `./userCreation.sh add jdoe` <br>
+    Usage. `./userCreation.sh add jdoe admin` <br>
+* **userRemoval.sh**, A BASH script for removing users on Linux servers.  <br>
+  Arguments:
+  - remove/Remove <br>
+    Remove SSH user <br>
+    Pass home to remove home directory <br>
+    Leaves in place otherwise <br>
+    Usage. `./userRemoval.sh remove jdoe` <br>
+    Usage. `./userRemoval.sh remove jdoe home` <br>
 * **wpInstall.sh**, a BASH script for installing WordPress on a Linux server. Has a "Web" and "Database" function in case
   the site and database are on separate servers. <br>
   For Web Server configuration: <br>
