@@ -74,10 +74,6 @@ function runProgram(){
 	### Check if user root
 	#### If root, update as root
 	if [ "$EUID" -eq 0 ]; then
-		echo "Updating core"
-		echo "-----------------------------------------------"
-		/usr/bin/wp core update --allow-root
-
 		echo "Updating plugins"
 		echo "-----------------------------------------------"
 		/usr/bin/wp plugin update --allow-root --all
@@ -86,12 +82,12 @@ function runProgram(){
 		echo "-----------------------------------------------"
 		/usr/bin/wp theme update --allow-root --all
 
-	#### Else, update as normal
-	else
 		echo "Updating core"
 		echo "-----------------------------------------------"
-		/usr/bin/wp core update
+		/usr/bin/wp core update --allow-root
 
+	#### Else, update as normal
+	else
 		echo "Updating plugins"
 		echo "-----------------------------------------------"
 		/usr/bin/wp plugin update --all
@@ -99,8 +95,11 @@ function runProgram(){
 		echo "Updating themes"
 		echo "-----------------------------------------------"
 		/usr/bin/wp theme update --all
-	fi
 
+		echo "Updating core"
+		echo "-----------------------------------------------"
+		/usr/bin/wp core update
+	fi
 }
 
 # Main, parse passed values
