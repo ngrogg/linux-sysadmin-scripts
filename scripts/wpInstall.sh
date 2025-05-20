@@ -244,8 +244,49 @@ function database(){
 	" "
     read junkInput
 
-    ## Parse MySQL root password from .mypass
+    ## MySQL password
     read -s -p "MySQL Password: " databasePass
+
+    ## Does Database exist?
+    ### Run query
+    databaseCheckQuery=$(mysql -u root -p"$databasePass" -e "SHOW DATABASES LIKE \"$databaseName\"")
+
+    ### Check if checkQuery null or not, exit if so
+    if [[ $databaseCheckQuery ]]; then
+        printf "%s\n" \
+        "${red}ISSUE DETECTED - Database already exists!"  \
+        "----------------------------------------------------" \
+        "Exiting!${normal}" \
+        " "
+        exit 1
+    else
+        printf "%s\n" \
+        "${green}Database doesn't exist"\
+        "----------------------------------------------------" \
+        "Proceeding${normal}" \
+        " "
+    fi
+
+
+    ## Does Database User exist?
+    ### Run query
+    userCheckQuery=$(mysql -u root -p"$databasePass" -e "SELECT user,host FROM mysql.user WHERE user like \"$databaseUser\" AND host like \"$welshIP\"")
+
+    ### Check if checkQuery null or not, exit if so
+    if [[ $userCheckQuery ]]; then
+        printf "%s\n" \
+        "${red}ISSUE DETECTED - User already exists!"  \
+        "----------------------------------------------------" \
+        "Exiting!${normal}" \
+        " "
+        exit 1
+    else
+        printf "%s\n" \
+        "${green}User doesn't exist"\
+        "----------------------------------------------------" \
+        "Proceeding${normal}" \
+        " "
+    fi
 
     ## Create user/database and grant permissions
     ### Create WordPress Database
