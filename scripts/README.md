@@ -29,6 +29,16 @@ Copy them over to the servers as needed, adjust comments as required and run the
   Ex. `./newMysqlUser.sh create jdoe localhost` <br>
 * **passgen.sh**, a BASH script for generating passwords. Probably not industry shattering, but good enough for most uses.<br>
   Usage, just run the script. <br>
+* **phpinfoChecker.sh**, A BASH script for finding occurrences of phpinfo() in a provided docroot. <br>
+  Takes a docroot as arguments. <br>
+  Usage. `./phpinfoChecker.sh check DOCROOT` <br>
+  Ex. `./phpinfoChecker.sh check /var/www` <br>
+  In the event there are false positives script creates an exclude file at `/root/scripts/phpinfoCheck/phpinfoExclude.txt`. <br>
+  Change the filepath as needed for your own configurations. <br>
+  Uses explicit filepath, not directories. <br>
+  I.e. `/var/www/html/public/flaggedFile.php` <br>
+  Not, `/var/www/html/public` <br>
+  If it doesn't exist Exclude file can be added manually or will be created by the script when run if file is not found. <br>
 * **smtpTest.pl**, A perl script for testing SMTP connections on a server. Two sections to fill out.
   First is the SMTP server section, which includes the host, port, user, password and addressee.
   Second section is to fill in the email From, To, Subject and Body. Afterwards run the script. <br>
