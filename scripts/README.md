@@ -5,6 +5,8 @@ These are scripts/programs that are only useful in specialized circumstances.
 Copy them over to the servers as needed, adjust comments as required and run the scripts. <br>
 
 ## Scripts
+* **clamscan.sh**, A BASH script for running clamscans on directories. Designed for crons.
+  Usage, just run the script.
 * **curltest.php**, A php script designed to test curls to an external URL.
   Primarily used for testing if a firewall is preventing an external connection.
   Usage is a matter of configuring the URL and setting the curl options as true (1) or false (0).
