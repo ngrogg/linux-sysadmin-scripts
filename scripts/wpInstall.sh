@@ -12,76 +12,77 @@ normal=$(tput sgr0)
 
 # Help function
 function helpFunction(){
-	printf "%s\n" \
-	"Help" \
-	"----------------------------------------------------" \
-	" " \
-	"help/Help" \ "* Display this help message and exit" \
-	" " \
-	"web/Web" \
-	"* Install WordPress site on web server" \
-	"* Takes a site docroot as an argument " \
+    printf "%s\n" \
+    "Help" \
+    "----------------------------------------------------" \
+    " " \
+    "help/Help" \ "* Display this help message and exit" \
+    " " \
+    "web/Web" \
+    "* Install WordPress site on web server" \
+    "* Takes a site docroot as an argument " \
     "* IMPORTANT: Does NOT create apache vhost! " \
-	"Usage. ./wpInstall.sh web docroot" \
-	"Ex. ./wpInstall.sh web /var/www/site.com" \
-	" " \
-	"database/database" \
-	"* Create Database and Database user on database server" \
-	"* Takes Web IP, Database name and database user as arguments " \
-	"Usage. ./wpInstall.sh database webIP databaseName databaseUser" \
-	"Ex. ./wpInstall.sh database 10.10.0.1 site_com site_user"
+    "Usage. ./wpInstall.sh web docroot" \
+    "Ex. ./wpInstall.sh web /var/www/site.com" \
+    " " \
+    "database/Database" \
+    "* Create Database and Database user on database server" \
+    "* Takes Web IP, Database name and database user as arguments" \
+    "* For local databases use localhost for the IP" \
+    "Usage. ./wpInstall.sh database webIP databaseName databaseUser" \
+    "Ex. ./wpInstall.sh database 10.10.0.1 site_com site_user"
 }
 
 # Function to install WordPress on Web
 function web(){
-	printf "%s\n" \
-	"Web Configure" \
-	"----------------------------------------------------"
+    printf "%s\n" \
+    "Web Configure" \
+    "----------------------------------------------------"
 
     ## Variables
     ### Webroot to install
     webroot=$1
 
     ### Is server DEB or RPM based?
-	### Check if using apt (DEB) or yum (RPM), set syslog based on output
-	if [[ -e /usr/bin/yum ]]; then
-		syslog="messages"
-	elif [[ -e /usr/bin/apt ]]; then
-		syslog="syslog"
-	else
-		#### This message shouldn't be reachable with our configs and may suggest a more serious issue
-		printf "%s\n" \
-		"${red}ISSUE DETECTED - This shouldn't be reachable! "\
-		"----------------------------------------------------" \
-		"messages and syslog not found, review server!${normal}"
-		exit 1
-	fi
+    ### Check if using apt (DEB) or dnf (RPM), set syslog based on output
+    if [[ -e /usr/bin/dnf ]]; then
+        packageManager="RPM"
+    elif [[ -e /usr/bin/apt ]]; then
+        packageManager="DEB"
+    else
+        #### This message shouldn't be reachable with our configs and may suggest a more serious issue
+        printf "%s\n" \
+        "${red}ISSUE DETECTED - This shouldn't be reachable! "\
+        "----------------------------------------------------" \
+        "messages and syslog not found, review server!${normal}"
+        exit 1
+    fi
 
     ## Validation
     ### Is script running as root?
-	printf "%s\n" \
-	"Checking if user is root "\
-	"----------------------------------------------------" \
-	" "
-	if [[ "$EUID" -eq 0 ]]; then
-		printf "%s\n" \
-		"${green}User is root "\
-		"----------------------------------------------------" \
-		"Proceeding${normal}" \
-		" "
-	else
-		printf "%s\n" \
-		"${red}ISSUE DETECTED - User is NOT root "\
-		"----------------------------------------------------" \
-		"Re-run script as root${normal}"
-		exit 1
-	fi
+    printf "%s\n" \
+    "Checking if user is root "\
+    "----------------------------------------------------" \
+    " "
+    if [[ "$EUID" -eq 0 ]]; then
+        printf "%s\n" \
+        "${green}User is root "\
+        "----------------------------------------------------" \
+        "Proceeding${normal}" \
+        " "
+    else
+        printf "%s\n" \
+        "${red}ISSUE DETECTED - User is NOT root "\
+        "----------------------------------------------------" \
+        "Re-run script as root${normal}"
+        exit 1
+    fi
 
     ### Was a webroot passed?
     if [[ -z $webroot ]]; then
-	    printf "%s\n" \
+        printf "%s\n" \
         "${red}ISSUE DETECTED - A webroot wasn't passed!"  \
-	    "----------------------------------------------------" \
+        "----------------------------------------------------" \
         "Script needs a webroot to install site to." \
         "Running help function and exiting!${normal}" \
         " "
@@ -89,40 +90,153 @@ function web(){
         helpFunction
         exit 1
     else
-	    printf "%s\n" \
+        printf "%s\n" \
         "${green}A Webroot value was passed"  \
-	    "----------------------------------------------------" \
+        "----------------------------------------------------" \
         "Proceeding${normal}" \
         " "
     fi
 
+    ### Does Webroot filepath exist?
+    if [[ -d $webroot ]]; then
+            #### Is Webroot directory empty?
+            if [[ "$(ls -A $webroot)" ]]; then
+                printf "%s\n" \
+                "${red}ISSUE DETECTED - Webroot isn't empty!"  \
+                "----------------------------------------------------" \
+                "Will not proceed to avoid overwriting files!" \
+                "Check folder and re-run once docroot empty" \
+                " " \
+                "Alternatively provide a different webroot " \
+                " " \
+                "Running help function and exiting!${normal}" \
+                " "
+
+                helpFunction
+                exit 1
+            else
+                printf "%s\n" \
+                "${green}Webroot exists and is empty"  \
+                "----------------------------------------------------" \
+                "Proceeding${normal}" \
+                " "
+            fi
+
+    fi
+
     ## Value confirmation
-	printf "%s\n" \
-	"${yellow}IMPORTANT: Value Confirmation" \
-	"----------------------------------------------------" \
+    printf "%s\n" \
+    "${yellow}IMPORTANT: Value Confirmation" \
+    "----------------------------------------------------" \
     "Webroot: " "$webroot" \
-	"If all clear, press enter to proceed or ctrl-c to cancel${normal}" \
-	" "
+    "If all clear, press enter to proceed or ctrl-c to cancel${normal}" \
+    " "
     read junkInput
 
-    ## Check for php-mysql, install if missing
-	printf "%s\n" \
-	"Checking for PHP MySQL "\
-	"----------------------------------------------------"
+    ### Check for PHP, install if missing
+    printf "%s\n" \
+    "Checking for PHP" \
+    "----------------------------------------------------" \
     " "
+
+    #### Package lists based on https://make.wordpress.org/hosting/handbook/server-environment/
+    #### Non existing packages on DEB/RPM installs skipped
+    if [[ ! -f /usr/bin/php ]]; then
+        if [[ "$packageManager" == "RPM" ]]; then
+                yum install -y php php-cli php-common php-fpm php-intl php-mbstring php-mysqlnd php-opcache php-pdo php-sodium php-xml
+        else
+                apt install -y libapache2-mod-php php php-cli php-common php-fpm php-gd php-igbinary php-intl php-json php-mbstring php-mysql php-xml php-zip
+        fi
+
+        exit 1
+    else
+        printf "%s\n" \
+        "${green}PHP found on server"  \
+        "----------------------------------------------------" \
+        "Proceeding${normal}" \
+        " "
+    fi
+
+    ### PHP package specific checks, in case a minimal PHP install is in place
+    #### Check for php-mysql, install if missing
+    printf "%s\n" \
+    "Checking for PHP MySQL " \
+    "----------------------------------------------------" \
+    " "
+
     if [[ ! $(php -m | grep mysql) ]]; then
-            if [[ -e /usr/bin/yum ]]; then
-                    sudo yum install php-mysqlnd -y
-            elif [[ -e /usr/bin/apt ]]; then
-                    sudo apt install php-mysql -y
-            else
-                #### This message shouldn't be reachable with our configs and may suggest a more serious issue
-                printf "%s\n" \
-                "${red}ISSUE DETECTED - This shouldn't be reachable! "\
-                "----------------------------------------------------" \
-                "messages and syslog not found, review server!${normal}"
-                exit 1
-            fi
+        if [[ "$packageManager" == "RPM" ]]; then
+                sudo dnf install php-mysqlnd -y
+        elif [[ "$packageManager" == "DEB" ]]; then
+                sudo apt install php-mysql -y
+        else
+            ##### This message shouldn't be reachable with our configs and may suggest a serious issue
+            printf "%s\n" \
+            "${red}ISSUE DETECTED - This shouldn't be reachable! "\
+            "----------------------------------------------------" \
+            "apt or dnf not found, review server!${normal}"
+            exit 1
+        fi
+    else
+        printf "%s\n" \
+        "${green}PHP MySQL found on server"  \
+        "----------------------------------------------------" \
+        "Proceeding${normal}" \
+        " "
+    fi
+
+    #### Check for php-json, install if missing
+    printf "%s\n" \
+    "Checking for PHP JSON" \
+    "----------------------------------------------------" \
+    " "
+
+    if [[ ! $(php -m | grep json) ]]; then
+        if [[ "$packageManager" == "RPM" ]]; then
+                sudo dnf install php-json -y
+        elif [[ "$packageManager" == "DEB" ]]; then
+                sudo apt install php-json -y
+        else
+            ##### This message shouldn't be reachable with our configs and may suggest a serious issue
+            printf "%s\n" \
+            "${red}ISSUE DETECTED - This shouldn't be reachable! "\
+            "----------------------------------------------------" \
+            "apt or dnf not found, review server!${normal}"
+            exit 1
+        fi
+    else
+        printf "%s\n" \
+        "${green}PHP JSON found on server"  \
+        "----------------------------------------------------" \
+        "Proceeding${normal}" \
+        " "
+    fi
+
+    #### Check for php-gd, install if missing
+    printf "%s\n" \
+    "Checking for PHP GD " \
+    "----------------------------------------------------" \
+    " "
+
+    if [[ ! $(php -m | grep gd) ]]; then
+        if [[ "$packageManager" == "RPM" ]]; then
+                sudo dnf install php-gd -y
+        elif [[ "$packageManager" == "DEB" ]]; then
+                sudo apt install php-gd -y
+        else
+            ##### This message shouldn't be reachable with our configs and may suggest a serious issue
+            printf "%s\n" \
+            "${red}ISSUE DETECTED - This shouldn't be reachable! "\
+            "----------------------------------------------------" \
+            "apt or dnf not found, review server!${normal}"
+            exit 1
+        fi
+    else
+        printf "%s\n" \
+        "${green}PHP GD found on server"  \
+        "----------------------------------------------------" \
+        "Proceeding${normal}" \
+        " "
     fi
 
     ## Install WordPress
@@ -148,26 +262,26 @@ function web(){
 
     ### Loosen permissions
     chmod 775 $(pwd) -R
-    if [[ "$syslog" == "yum" ]]; then
-        chown apache:webdev $(pwd) -R
+    if [[ "$packageManager" == "RPM" ]]; then
+        chown apache $(pwd) -R
     else
-        chown www-data:webdev $(pwd) -R
+        chown www-data $(pwd) -R
     fi
 
     ## Prompt user on next steps
-	printf "%s\n" \
-	"${yellow}IMPORTANT: Web function complete" \
-	"----------------------------------------------------" \
-	"WordPress files in place" \
+    printf "%s\n" \
+    "${yellow}IMPORTANT: Web function complete" \
+    "----------------------------------------------------" \
+    "WordPress files in place" \
     "If not already done, create a virtualhost" \
     "Run database function next on database server next${normal}"
 }
 
 # Function to create database/database user on database
 function database(){
-	printf "%s\n" \
-	"database Configure" \
-	"----------------------------------------------------"
+    printf "%s\n" \
+    "database Configure" \
+    "----------------------------------------------------"
 
     ## Variables
     webIP=$1
@@ -176,29 +290,29 @@ function database(){
 
     ## Validation
     ### Is script running as root?
-	printf "%s\n" \
-	"Checking if user is root "\
-	"----------------------------------------------------" \
-	" "
-	if [[ "$EUID" -eq 0 ]]; then
-		printf "%s\n" \
-		"${green}User is root "\
-		"----------------------------------------------------" \
-		"Proceeding${normal}" \
-		" "
-	else
-		printf "%s\n" \
-		"${red}ISSUE DETECTED - User is NOT root "\
-		"----------------------------------------------------" \
-		"Re-run script as root${normal}"
-		exit 1
-	fi
+    printf "%s\n" \
+    "Checking if user is root "\
+    "----------------------------------------------------" \
+    " "
+    if [[ "$EUID" -eq 0 ]]; then
+        printf "%s\n" \
+        "${green}User is root "\
+        "----------------------------------------------------" \
+        "Proceeding${normal}" \
+        " "
+    else
+        printf "%s\n" \
+        "${red}ISSUE DETECTED - User is NOT root "\
+        "----------------------------------------------------" \
+        "Re-run script as root${normal}"
+        exit 1
+    fi
 
     ### Check if web IP was passed
     if [[ -z $webIP ]]; then
-	    printf "%s\n" \
+        printf "%s\n" \
         "${red}ISSUE DETECTED - A Web IP wasn't passed!"  \
-	    "----------------------------------------------------" \
+        "----------------------------------------------------" \
         "Script needs a Web IP for database user" \
         "Running help function and exiting!${normal}" \
         " "
@@ -209,9 +323,9 @@ function database(){
 
     ### Check if database name was passed
     if [[ -z $databaseName ]]; then
-	    printf "%s\n" \
+        printf "%s\n" \
         "${red}ISSUE DETECTED - A Database Name wasn't passed!"  \
-	    "----------------------------------------------------" \
+        "----------------------------------------------------" \
         "Script needs a database for site." \
         "Running help function and exiting!${normal}" \
         " "
@@ -222,9 +336,9 @@ function database(){
 
     ### Check if database user was passed
     if [[ -z $databaseUser ]]; then
-	    printf "%s\n" \
+        printf "%s\n" \
         "${red}ISSUE DETECTED - A Database User wasn't passed!"  \
-	    "----------------------------------------------------" \
+        "----------------------------------------------------" \
         "Script needs a Database User for site." \
         "Running help function and exiting!${normal}" \
         " "
@@ -234,14 +348,14 @@ function database(){
     fi
 
     ## Value confirmation
-	printf "%s\n" \
-	"${yellow}IMPORTANT: Value Confirmation" \
-	"----------------------------------------------------" \
+    printf "%s\n" \
+    "${yellow}IMPORTANT: Value Confirmation" \
+    "----------------------------------------------------" \
     "Web IP: " "$webIP" \
     "Database Name: " "$databaseName" \
     "Database User: " "$databaseUser" \
-	"If all clear, press enter to proceed or ctrl-c to cancel${normal}" \
-	" "
+    "If all clear, press enter to proceed or ctrl-c to cancel${normal}" \
+    " "
     read junkInput
 
     ## MySQL password
@@ -315,10 +429,10 @@ function database(){
     echo "Database Host: $(hostname -I)" >> /var/log/WordPressOutput.log
 
     ## Prompt user on next steps
-	printf "%s\n" \
-	"${yellow}IMPORTANT: database function complete" \
-	"----------------------------------------------------" \
-	"WordPress database and user created" \
+    printf "%s\n" \
+    "${yellow}IMPORTANT: database function complete" \
+    "----------------------------------------------------" \
+    "WordPress database and user created" \
     "If not already done, add hostfile entry for site" \
     "Load site in browser and finish install" \
     "Use values listed below for install prompts.${normal}" \
@@ -329,41 +443,41 @@ function database(){
 }
 
 # Main, read passed flags
-	printf "%s\n" \
-	"WordPress Install" \
-	"----------------------------------------------------" \
-	" " \
-	"Checking flags passed" \
-	"----------------------------------------------------"
+    printf "%s\n" \
+    "WordPress Install" \
+    "----------------------------------------------------" \
+    " " \
+    "Checking flags passed" \
+    "----------------------------------------------------"
 
 # Check passed flags
 case "$1" in
 [Hh]elp)
-	printf "%s\n" \
-	"Running Help function" \
-	"----------------------------------------------------"
-	helpFunction
-	exit
-	;;
+    printf "%s\n" \
+    "Running Help function" \
+    "----------------------------------------------------"
+    helpFunction
+    exit
+    ;;
 [Ww]eb)
-	printf "%s\n" \
-	"Running script" \
-	"----------------------------------------------------"
+    printf "%s\n" \
+    "Running script" \
+    "----------------------------------------------------"
     web $2
-	;;
+    ;;
 [Dd]atabase)
-	printf "%s\n" \
-	"Running script" \
-	"----------------------------------------------------"
+    printf "%s\n" \
+    "Running script" \
+    "----------------------------------------------------"
     database $2 $3 $4
-	;;
+    ;;
 *)
-	printf "%s\n" \
-	"ISSUE DETECTED - Invalid input detected!" \
-	"----------------------------------------------------" \
-	"Running help script and exiting." \
-	"Re-run script with valid input"
-	helpFunction
-	exit
-	;;
+    printf "%s\n" \
+    "ISSUE DETECTED - Invalid input detected!" \
+    "----------------------------------------------------" \
+    "Running help script and exiting." \
+    "Re-run script with valid input"
+    helpFunction
+    exit
+    ;;
 esac
