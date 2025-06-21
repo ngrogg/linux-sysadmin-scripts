@@ -144,11 +144,16 @@ function web(){
     if [[ ! -f /usr/bin/php ]]; then
         if [[ "$packageManager" == "RPM" ]]; then
                 yum install -y php php-cli php-common php-fpm php-intl php-mbstring php-mysqlnd php-opcache php-pdo php-sodium php-xml
-        else
+        elif [[ "$packageManager" == "DEB" ]]; then
                 apt install -y libapache2-mod-php php php-cli php-common php-fpm php-gd php-igbinary php-intl php-json php-mbstring php-mysql php-xml php-zip
+        else
+            ##### Package Manager error if non-apt/dnf server
+            printf "%s\n" \
+            "${red}ISSUE DETECTED - Package managers not found! "\
+            "----------------------------------------------------" \
+            "apt or dnf not found, review server!${normal}"
+            exit 1
         fi
-
-        exit 1
     else
         printf "%s\n" \
         "${green}PHP found on server"  \
@@ -170,9 +175,9 @@ function web(){
         elif [[ "$packageManager" == "DEB" ]]; then
                 sudo apt install php-mysql -y
         else
-            ##### This message shouldn't be reachable with our configs and may suggest a serious issue
+            ##### Package Manager error if non-apt/dnf server
             printf "%s\n" \
-            "${red}ISSUE DETECTED - This shouldn't be reachable! "\
+            "${red}ISSUE DETECTED - Package managers not found! "\
             "----------------------------------------------------" \
             "apt or dnf not found, review server!${normal}"
             exit 1
@@ -197,9 +202,9 @@ function web(){
         elif [[ "$packageManager" == "DEB" ]]; then
                 sudo apt install php-json -y
         else
-            ##### This message shouldn't be reachable with our configs and may suggest a serious issue
+            ##### Package Manager error if non-apt/dnf server
             printf "%s\n" \
-            "${red}ISSUE DETECTED - This shouldn't be reachable! "\
+            "${red}ISSUE DETECTED - Package managers not found! "\
             "----------------------------------------------------" \
             "apt or dnf not found, review server!${normal}"
             exit 1
@@ -224,9 +229,9 @@ function web(){
         elif [[ "$packageManager" == "DEB" ]]; then
                 sudo apt install php-gd -y
         else
-            ##### This message shouldn't be reachable with our configs and may suggest a serious issue
+            ##### Package Manager error if non-apt/dnf server
             printf "%s\n" \
-            "${red}ISSUE DETECTED - This shouldn't be reachable! "\
+            "${red}ISSUE DETECTED - Package managers not found! "\
             "----------------------------------------------------" \
             "apt or dnf not found, review server!${normal}"
             exit 1
