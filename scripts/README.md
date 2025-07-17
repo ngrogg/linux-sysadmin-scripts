@@ -60,6 +60,15 @@ Copy them over to the servers as needed, adjust comments as required and run the
     Leaves in place otherwise <br>
     Usage. `./userRemoval.sh remove jdoe` <br>
     Usage. `./userRemoval.sh remove jdoe home` <br>
+* **wpAIAuthorChecks.sh**, A BASH script for checking WordPress sites for plugins authored by AI. 
+  Should at least catch the lazily made ones with the AI chat listed as an author. <br> 
+  Arguments: <br> 
+  - **help**, Display help message and exit
+  - **check**, Check a provided Docroot for WordPress plugins with AI listed as the author.
+    `Usage. ./wpAIAuthorChecks.sh check /path/to/docroot`
+    `Ex. ./wpAIAuthorChecks.sh check /var/www/html`
+  Requirements: <br>
+  Requires WP CLI be installed. Will install if it's not. <br>
 * **wpInstall.sh**, a BASH script for installing WordPress on a Linux server. Has a "Web" and "Database" function in case
   the site and database are on separate servers. <br>
   For Web Server configuration: <br>
