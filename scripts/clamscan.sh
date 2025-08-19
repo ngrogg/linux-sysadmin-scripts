@@ -6,7 +6,7 @@
 
 # TODO Expand directories as needed
 # Array of directories to scan
-targetDir=("/bin" "/lib" "/opt" "/sbin" "/tmp" "/usr" "/home")
+targetDir=("/bin" "/lib" "/opt" "/sbin" "/tmp" "/etc" "/usr" "/var" "/home")
 
 # Log file to append output to
 logFile="/var/log/clamav/clamscan.log"
