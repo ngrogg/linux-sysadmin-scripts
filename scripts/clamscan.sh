@@ -60,11 +60,9 @@ for directory in "${targetDir[@]}"; do
 
         ## Log additional output based on output of previous command
         if [[ $? -eq 0 ]]; then
-                echo "Scan of $directory completed successfully." | tee -a "$logFile"
-        elif [[ $? -eq 1 ]]; then
-                echo "Scan of $directory found infected files." | tee -a "$logFile"
+              echo "Scan of $directory completed successfully." | tee -a "$logFile"
         else
-                echo "Scan of $directory encountered an error." | tee -a "$logFile"
+              echo "Scan of $directory returned non-zero message, check manually" | tee -a "$logFile"
         fi
 
         ## Add to console line for readability
