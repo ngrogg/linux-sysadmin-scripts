@@ -3,6 +3,7 @@
 # Lock MySQL User
 # BASH script to lock a MySQL user
 # By Nicholas Grogg
+# Revision: 20260119
 
 # Color variables
 ## Errors

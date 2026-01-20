@@ -2,6 +2,7 @@
 
 # A BASH script to generate a random password based on date
 # By Nicholas Grogg
+# Revision: 20260119
 
 # Assign passed value to length
 length=$1

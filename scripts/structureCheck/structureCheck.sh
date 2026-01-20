@@ -3,6 +3,7 @@
 # Structure check
 # Checks logs for "Structure needs cleaning" message, send email if found
 # By Nicholas Grogg
+# Revision: 20260119
 
 ## Help function
 function helpFunction(){
