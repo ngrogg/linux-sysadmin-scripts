@@ -26,15 +26,15 @@ function helpFunction(){
     " " \
     "lock/Lock" \
     "* Lock MySQL user " \
-    "* Takes a username and server IP as arguments " \
+    "* Takes a username and web IP as arguments " \
     "* Run as root or with sudo permissions" \
-    "* Can lock either remote or local users" \
+    "* Can lock either remote or local database users" \
     " " \
-    "For remote databases provide the remote IP:" \
+    "For remote database users provide the remote IP:" \
     "Usage. ./lockMysqlUser.sh lock username remoteIP " \
     "Ex. ./lockMysqlUser.sh lock jdoe_root 10.138.1.2" \
     " " \
-    "For local databases use localhost for IP: " \
+    "For local databases use localhost for IP:" \
     "Ex. ./lockMysqlUser.sh lock jdoe_root localhost "
 }
 
