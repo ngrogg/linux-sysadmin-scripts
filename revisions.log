@@ -3,3 +3,7 @@ List of revisions + scripts
 Script:
 Revision:
 Change:
+
+Script: scripts/passgen.sh
+Revision: 20260119
+Change: Additional symbols added to password string
