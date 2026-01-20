@@ -25,8 +25,11 @@ function helpFunction(){
     "* Takes a username and IP as arguments" \
     "* Creates a username with near root permissions for management" \
     "Usage. ./newMysqlUser.sh create username web_ip" \
+    " " \
+    "For remote database users use remote IP:" \
     "Ex. ./newMysqlUser.sh create jdoe 10.138.1.2" \
-    "Ex. ./newMysqlUser.sh create jdoe 127.0.0.1" \
+    " " \
+    "For local database users use localhost for IP:" \
     "Ex. ./newMysqlUser.sh create jdoe localhost"
 }
 
@@ -169,12 +172,12 @@ function runProgram(){
 }
 
 # Main, read passed flags
-    printf "%s\n" \
-    "New DB user" \
-    "----------------------------------------------------" \
-    " " \
-    "Checking flags passed" \
-    "----------------------------------------------------"
+printf "%s\n" \
+"New DB user" \
+"----------------------------------------------------" \
+" " \
+"Checking flags passed" \
+"----------------------------------------------------"
 
 # Check passed flags
 case "$1" in
