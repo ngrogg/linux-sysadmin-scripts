@@ -19,7 +19,7 @@ fi
 # Append to log, use tee to output to screen
 echo "$(date +%Y%m%d) Beginning scan on ${targetDir[*]}" | tee -a "$logFile"
 
-# For loop to scan dirs
+# For loop to scan dirs, parallel is not used for resource usage concerns
 for directory in "${targetDir[@]}"; do
         echo "Scanning $directory" | tee -a "$logFile"
 
