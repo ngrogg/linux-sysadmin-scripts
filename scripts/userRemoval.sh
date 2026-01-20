@@ -17,26 +17,27 @@ normal=$(tput sgr0)
 
 # Help function
 function helpFunction(){
-	printf "%s\n" \
-	"Help" \
-	"----------------------------------------------------" \
-	" " \
-	"help/Help" \
-	"* Display this help message and exit" \
-	" " \
+    printf "%s\n" \
+    "Help" \
+    "----------------------------------------------------" \
+    " " \
+    "help/Help" \
+    "* Display this help message and exit" \
+    " " \
     "remove/Remove" \
     "* Remove SSH user" \
     "* Pass home to remove home directory" \
     "* Leaves in place otherwise" \
+    "* Run as root or with sudo perms" \
     "Usage. ./userRemoval.sh remove jdoe " \
     "Usage. ./userRemoval.sh remove jdoe home "
 }
 
 # Function to run program
 function runProgram(){
-	printf "%s\n" \
-	"Remove" \
-	"----------------------------------------------------"
+    printf "%s\n" \
+    "Remove" \
+    "----------------------------------------------------"
 
     ### Variables
     #### Username to remove
@@ -110,35 +111,35 @@ function runProgram(){
 }
 
 # Main, read passed flags
-	printf "%s\n" \
-	"User Removal" \
-	"----------------------------------------------------" \
-	" " \
-	"Checking flags passed" \
-	"----------------------------------------------------"
+printf "%s\n" \
+"User Removal" \
+"----------------------------------------------------" \
+" " \
+"Checking flags passed" \
+"----------------------------------------------------"
 
 # Check passed flags
 case "$1" in
 [Hh]elp)
-	printf "%s\n" \
-	"Running Help function" \
-	"----------------------------------------------------"
-	helpFunction
-	exit
-	;;
+    printf "%s\n" \
+    "Running Help function" \
+    "----------------------------------------------------"
+    helpFunction
+    exit
+    ;;
 [Rr]emove)
-	printf "%s\n" \
-	"Running script" \
-	"----------------------------------------------------"
-	runProgram $2 $3
-	;;
+    printf "%s\n" \
+    "Running script" \
+    "----------------------------------------------------"
+    runProgram $2 $3
+    ;;
 *)
-	printf "%s\n" \
-	"${red}ISSUE DETECTED - Invalid input detected!" \
-	"----------------------------------------------------" \
-	"Running help script and exiting." \
-	"Re-run script with valid input${normal}"
-	helpFunction
-	exit
-	;;
+    printf "%s\n" \
+    "${red}ISSUE DETECTED - Invalid input detected!" \
+    "----------------------------------------------------" \
+    "Running help script and exiting." \
+    "Re-run script with valid input${normal}"
+    helpFunction
+    exit
+    ;;
 esac
