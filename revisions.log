@@ -6,8 +6,12 @@ Change:
 
 Script: scripts/passgen.sh
 Revision: 20260119
-Change: Additional symbols added to password string
+Change: Additional symbols added to password string.
 
 Script: scripts/lockMysqlUser.sh
 Revision: 20260119
-Change: Bugfixes
+Change: Bugfixes.
+
+Script: scripts/structureCheck/structureCheck.sh
+Revision: 20260119
+Change: Replaced printf ' with printf ". Ran retab.
