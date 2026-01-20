@@ -17,32 +17,36 @@ normal=$(tput sgr0)
 
 # Help function
 function helpFunction(){
-	printf "%s\n" \
-	"Help" \
-	"----------------------------------------------------" \
-	" " \
-	"help/Help" \
-	"* Display this help message and exit" \
-	" " \
-	"lock/Lock" \
-	"* Lock MySQL user " \
-	"* Takes a username an IP as arguments " \
-	"Usage. ./lockMysqlUser.sh lock username welshIP " \
-	"Ex. ./lockMysqlUser.sh lock jdoe_root 10.138.1.2" \
-	" " \
-	"For Statnz servers use localhost for welshIP: " \
-	"Ex. ./lockMysqlUser.sh lock jdoe_root localhost "
+    printf "%s\n" \
+    "Help" \
+    "----------------------------------------------------" \
+    " " \
+    "help/Help" \
+    "* Display this help message and exit" \
+    " " \
+    "lock/Lock" \
+    "* Lock MySQL user " \
+    "* Takes a username and server IP as arguments " \
+    "* Run as root or with sudo permissions" \
+    "* Can lock either remote or local users" \
+    " " \
+    "For remote databases provide the remote IP:" \
+    "Usage. ./lockMysqlUser.sh lock username remoteIP " \
+    "Ex. ./lockMysqlUser.sh lock jdoe_root 10.138.1.2" \
+    " " \
+    "For local databases use localhost for IP: " \
+    "Ex. ./lockMysqlUser.sh lock jdoe_root localhost "
 }
 
 # Function to run program
 function runProgram(){
-	printf "%s\n" \
-	"Lock" \
-	"----------------------------------------------------"
+    printf "%s\n" \
+    "Lock" \
+    "----------------------------------------------------"
 
     ## Variables
     databaseUser=$1
-    welshIP=$2
+    databaseIP=$2
 
     ## Validation
     ### Is script running as root?
@@ -92,12 +96,12 @@ function runProgram(){
         exit 1
     fi
 
-    ### Check if welsh IP was passed
-    if [[ -z $welshIP ]]; then
+    ### Check if IP was passed
+    if [[ -z $databaseIP ]]; then
         printf "%s\n" \
-        "${red}ISSUE DETECTED - A Welsh IP wasn't passed!"  \
+        "${red}ISSUE DETECTED - An IP wasn't passed!"  \
         "----------------------------------------------------" \
-        "Script needs a Welsh IP for database user" \
+        "Script needs an IP for database user" \
         "Running help function and exiting!${normal}" \
         " "
 
@@ -110,75 +114,69 @@ function runProgram(){
     "${yellow}IMPORTANT: Value Confirmation" \
     "----------------------------------------------------" \
     "Database User: " "$databaseUser" \
-    "Welsh IP: " "$welshIP" \
+    "Database IP: " "$databaseIP" \
     "If all clear, press enter to proceed or ctrl-c to cancel${normal}" \
     " "
 
     read junkInput
 
-    ## Parse MySQL root password from .mypass
-    ### Older CFE mypass
-    if [[ $(wc -l /root/.mypass | awk '{print $1}') -eq 1 ]]; then
-            databasePass=$(cat /root/.mypass)
-    ### Newer Salt mypass
-    else
-            databasePass=$(grep -i password /root/.mypass | sed -e "s/^Password://")
-    fi
+    ## Read in password quietly
+    read -s -p "Enter database user password: " databasePass
 
     ## Check if user exists
     ### Run query
-    checkQuery=$(mysql -u root -p"$databasePass" -e "SELECT user,host FROM mysql.user WHERE user like \"$databaseUser\" AND host like \"$welshIP\"")
+    checkQuery=$(mysql -u root -p"$databasePass" -e "SELECT user,host FROM mysql.user WHERE user like \"$databaseUser\" AND host like \"$databaseIP\"")
 
-    ### Check if checkQuery null or not, exit if so
+    ### Check if checkQuery true or not, exit if not
     if [[ $checkQuery ]]; then
         printf "%s\n" \
-        "${red}ISSUE DETECTED - User already exists!"  \
+        "${red}ISSUE DETECTED - User doesn't exist!"  \
         "----------------------------------------------------" \
         "Exiting!${normal}" \
         " "
         exit 1
     else
         printf "%s\n" \
-        "${green}User doesn't exist"\
+        "${green}User exists"\
         "----------------------------------------------------" \
         "Proceeding${normal}" \
         " "
     fi
 
     ## Lock MySQL user
-    mysql -u root -p"$databasePass" -e "ALTER USER $databaseUser@$welshIP ACCOUNT LOCK;"
+    mysql -u root -p"$databasePass" -e "ALTER USER $databaseUser@$databaseIP ACCOUNT LOCK;"
 }
 
 # Main, read passed flags
-	printf "%s\n" \
-	"Lock MySQL User" \
-	"----------------------------------------------------" \
-	" " \
-	"Checking flags passed" \
-	"----------------------------------------------------"
+printf "%s\n" \
+"Lock MySQL User" \
+"----------------------------------------------------" \
+" " \
+"Checking flags passed" \
+"----------------------------------------------------"
 
 # Check passed flags
 case "$1" in
 [Hh]elp)
-	printf "%s\n" \
-	"Running Help function" \
-	"----------------------------------------------------"
-	helpFunction
-	exit
-	;;
+    printf "%s\n" \
+    "Running Help function" \
+    "----------------------------------------------------"
+    helpFunction
+    exit
+    ;;
 [Ll]ock)
-	printf "%s\n" \
-	"Running script" \
-	"----------------------------------------------------"
-	runProgram $2 $3
-	;;
+    printf "%s\n" \
+    "Running script" \
+    "----------------------------------------------------"
+    runProgram $2 $3
+    ;;
 *)
-	printf "%s\n" \
-	"${red}ISSUE DETECTED - Invalid input detected!" \
-	"----------------------------------------------------" \
-	"Running help script and exiting." \
-	"Re-run script with valid input${normal}"
-	helpFunction
-	exit
-	;;
+    printf "%s\n" \
+    "${red}ISSUE DETECTED - Invalid input detected!" \
+    "----------------------------------------------------" \
+    "Running help script and exiting." \
+    "Re-run script with valid input${normal}"
+    helpFunction
+    exit
+    ;;
 esac
