@@ -4,6 +4,58 @@ Script:
 Revision:
 Change:
 
+Script: scripts/clamscan.sh
+Revision: 20260201
+Change: Added set -e flag
+
+Script: scripts/diskPinger/diskPinger.sh
+Revision: 20260201
+Change: Added set -e flag
+
+Script: scripts/lockMysqlUser.sh
+Revision: 20260201
+Change: Added set -e flag
+
+Script: scripts/loginBackup.sh
+Revision: 20260201
+Change: Added set -e flag
+
+Script: scripts/newMysqlUser.sh
+Revision: 20260201
+Change: Added set -e flag
+
+Script: scripts/passgen.sh
+Revision: 20260201
+Change: Added set -e flag
+
+Script: scripts/phpinfoChecker.sh
+Revision: 20260201
+Change: Added set -e flag
+
+Script: scripts/structureCheck/structureCheck.sh
+Revision: 20260201
+Change: Added set -e flag
+
+Script: scripts/userCreation.sh
+Revision: 20260201
+Change: Added set -e flag
+
+Script: scripts/userRemoval.sh
+Revision: 20260201
+Change: Added set -e flag
+
+Script: scripts/wpAIAuthorChecks.sh
+Revision: 20260201
+Change: Added set -e flag
+
+Script: scripts/wpInstall.sh
+Revision: 20260201
+Change: Added set -e flag
+
+Script: scripts/wpUpdate.sh
+Revision: 20260201
+Change: Added set -e flag
+
 Script: scripts/passgen.sh
 Revision: 20260119
 Change: Additional symbols added to password string.

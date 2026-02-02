@@ -4,6 +4,9 @@
 # Checks for low disk space, sends email if found
 # By Nicholas Grogg
 
+# Set exit on error
+set -e
+
 # Color variables
 ## Errors
 red=$(tput setaf 1)

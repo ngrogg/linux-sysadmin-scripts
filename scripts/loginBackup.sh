@@ -5,6 +5,9 @@
 # Designed to be cronned
 # By Nicholas Grogg
 
+# Set exit on error
+set -e
+
 # Does folder exist? Make it if not
 if [[ ! -d /root/loginBackup/ ]]; then
         mkdir /root/loginBackup

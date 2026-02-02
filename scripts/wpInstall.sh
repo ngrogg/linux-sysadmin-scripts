@@ -4,6 +4,9 @@
 # BASH script to install WordPress
 # By Nicholas Grogg
 
+# Set exit on error
+set -e
+
 # Color variables
 red=$(tput setaf 1)
 green=$(tput setaf 2)

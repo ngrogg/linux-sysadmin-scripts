@@ -4,6 +4,9 @@
 # BASH script to check for WordPress plugins with AI as the author
 # By Nicholas Grogg
 
+# Set exit on error
+set -e
+
 # Color variables
 ## Errors
 red=$(tput setaf 1)

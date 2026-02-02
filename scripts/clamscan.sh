@@ -4,6 +4,9 @@
 # BASH script to scan directories
 # By Nicholas Grogg
 
+# Set exit on error
+set -e
+
 # TODO Expand directories as needed
 # Array of directories to scan
 targetDir=("/bin" "/lib" "/opt" "/sbin" "/tmp" "/etc" "/usr" "/var" "/home")

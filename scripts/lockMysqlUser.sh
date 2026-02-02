@@ -5,6 +5,9 @@
 # By Nicholas Grogg
 # Revision: 20260119
 
+# Set exit on error
+set -e
+
 # Color variables
 ## Errors
 red=$(tput setaf 1)

@@ -4,6 +4,9 @@
 # By Nicholas Grogg
 # Revision: 20260119
 
+# Set exit on error
+set -e
+
 # Assign passed value to length
 length=$1
 

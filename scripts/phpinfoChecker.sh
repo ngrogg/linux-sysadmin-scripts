@@ -4,6 +4,9 @@
 # BASH script to find files containing phpinfo() and sending an email
 # By Nicholas Grogg
 
+# Set exit on error
+set -e
+
 # Color variables
 ## Errors
 red=$(tput setaf 1)

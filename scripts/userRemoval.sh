@@ -4,6 +4,9 @@
 # BASH script to remove an SSH user
 # By Nicholas Grogg
 
+# Set exit on error
+set -e
+
 # Color variables
 ## Errors
 red=$(tput setaf 1)
