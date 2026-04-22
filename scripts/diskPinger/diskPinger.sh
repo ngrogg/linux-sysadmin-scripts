@@ -3,6 +3,7 @@
 # Disk Pinger
 # Checks for low disk space, sends email if found
 # By Nicholas Grogg
+# Revision: 20260422
 
 # Set exit on error
 set -e
@@ -29,6 +30,7 @@ function helpFunction(){
 	"check/Check" \
 	"* Check available disk space and open a ticket " \
 	"* Takes a filepath, email, percentage over as arguments" \
+    "* Also checks inodes" \
 	"Usage. ./diskPinger.sh check FILEPATH EMAIL THRESHOLD%" \
 	"Ex. ./diskPinger.sh check / jdoe@email.com 90"
 }
@@ -125,33 +127,53 @@ function runProgram(){
     fi
 
     printf "%s\n" \
-    "Checking disk space" \
+    "Checking disk space and inodes" \
     "----------------------------------------------------" \
     " "
 
     ### Get available disk space
     availableSpace=$(df "$filePath" -h | awk 'NR==2 {print $5}' | rev | cut -c2- | rev)
 
+    ### Get available disk inodes
+    availableInodes=$(df "$filePath" -i | awk 'NR==2 {print $5}' | rev | cut -c2- | rev)
+
     ### Check vs threshold, if percentage over threshold send email
-    if [[ $(bc <<< "$availableSpace > $threshold") == "1" ]]; then
-        #### Get list of files using disk space, write output to file
+    if [[ $(bc <<< "$availableSpace > $threshold") == "1" || $(bc <<< "$availableInodes > $threshold") == "1" ]]; then
+        #### Get list of files using disk space or inodes, write output to file
         cd $filePath
-        du --max-depth=5 -chax  2>&1 | grep '[0-9\.]\+G' | sort -hr | head -n 10 > /root/diskPingerOutput.txt
+
+        ##### Low disk and inodes
+        if [[ $(bc <<< "$availableSpace > $threshold") == "1" && $(bc <<< "$availableInodes > $threshold") == "1" ]]; then
+            echo "Disk Space usage" >> /root/diskPingerOutput.txt
+            du --max-depth=5 -chax  2>&1 | grep '[0-9\.]\+G' | sort -hr | head -n 10 >> /root/diskPingerOutput.txt
+            echo "" >> /root/diskPingerOutput.txt
+            echo "Disk Inode usage" >> /root/diskPingerOutput.txt
+            find . -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -n | tail -20 >> /root/diskPingerOutput.txt
+        ##### Low Disk Space only
+        elif [[ $(bc <<< "$availableSpace > $threshold") == "1" && $(bc <<< "$availableInodes > $threshold") == "0" ]]; then
+            echo "Disk Space usage" >> /root/diskPingerOutput.txt
+            du --max-depth=5 -chax  2>&1 | grep '[0-9\.]\+G' | sort -hr | head -n 10 >> /root/diskPingerOutput.txt
+        ##### Low Disk Inodes only
+        elif [[ $(bc <<< "$availableSpace > $threshold") == "0" && $(bc <<< "$availableInodes > $threshold") == "1" ]]; then
+            echo "Disk Inode usage" >> /root/diskPingerOutput.txt
+            find . -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -n | tail -20 >> /root/diskPingerOutput.txt
+        ##### Fail state, shouldn't be reachable
+        else
+            echo "This shouldn't be reachable..."
+            exit 1
+        fi
 
         #### Check if file exists, useful on initial runs
-        if [[ -e /root/diskPingerEmailSent.txt ]]; then
-                ##### Has an email been sent in the last two weeks? If not send one
-                if [[ $(find /root/diskPingerEmailSent.txt -mtime +14) ]]; then
-                        ###### Remove old file
-                        rm /root/diskPingerEmailSent.txt
+        if [[ -e /root/scripts/diskPingerEmailSent.txt ]]; then
+            ##### Has an email been sent in the last two weeks? If not send one
+            if [[ $(find /root/scripts/diskPingerEmailSent.txt -mtime +14) ]]; then
+                ###### Remove old file
+                rm /root/scripts/diskPingerEmailSent.txt
 
-                        ###### Make new file
-                        echo "$(date)" >> /root/diskPingerEmailSent.txt
-
-                ##### Else exit so inboxes aren't spammed
-                else
-                        exit 0
-                fi
+            ##### Else exit so inboxes aren't spammed
+            else
+                exit 0
+            fi
         fi
 
         #### Send email
