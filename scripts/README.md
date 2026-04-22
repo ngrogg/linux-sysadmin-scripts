@@ -5,8 +5,6 @@ These are scripts/programs that are only useful in specialized circumstances.
 Copy them over to the servers as needed, adjust comments as required and run the scripts. <br>
 
 ## Scripts
-* **clamscan.sh**, A BASH script for running clamscans on directories. Designed for crons.
-  Usage, just run the script.
 * **curltest.php**, A php script designed to test curls to an external URL.
   Primarily used for testing if a firewall is preventing an external connection.
   Usage is a matter of configuring the URL and setting the curl options as true (1) or false (0).
@@ -17,13 +15,13 @@ Copy them over to the servers as needed, adjust comments as required and run the
 * **diskPinger**, scripts for monitoring disk space on a server.
 * **fpmStatus.php**, PHP script for viewing php-fpm info for page. Place in doc root and call via curl: `curl domain.com/fpmStatus.php` <br>
   Don't forget to remove afterwards! <br>
-* **loginBackup.sh**, a BASH script for backing up `/etc/shadow` and `/etc/passwd`. Keeps backups for a week, removes older backups. <br>
-  Usage, just run the script. Designed for cron. <br>
 * **lockMysqlUser.sh**, a BASH script for locking MySQL users. Takes a username and IP as an argument. <br>
   Usage, `./lockMysqlUser.sh lock USERNAME IP` <br>
   Ex. `./lockMysqlUser.sh lock jdoe 10.138.0.2` <br>
   Ex. `./lockMysqlUser.sh lock jdoe 127.0.0.1` <br>
   Ex. `./lockMysqlUser.sh lock jdoe localhost` <br>
+* **loginBackup.sh**, a BASH script for backing up `/etc/shadow` and `/etc/passwd`. Keeps backups for a week, removes older backups. <br>
+  Usage, just run the script. Designed for cron. <br>
 * **newMysqlUser.sh**, a BASH script for creating MySQL users. Takes a username and IP as an argument. <br>
   Usage, `./newMysqlUser.sh create USERNAME IP` <br>
   Ex. `./newMysqlUser.sh create jdoe 10.138.0.2` <br>
@@ -41,6 +39,8 @@ Copy them over to the servers as needed, adjust comments as required and run the
   I.e. `/var/www/html/public/flaggedFile.php` <br>
   Not, `/var/www/html/public` <br>
   If it doesn't exist Exclude file can be added manually or will be created by the script when run if file is not found. <br>
+* **runClamscan.sh**, A BASH script for running clamscans on directories. Designed for crons.
+  Usage, just run the script.
 * **smtpTest.pl**, A perl script for testing SMTP connections on a server. Two sections to fill out.
   First is the SMTP server section, which includes the host, port, user, password and addressee.
   Second section is to fill in the email From, To, Subject and Body. Afterwards run the script. <br>
@@ -60,9 +60,9 @@ Copy them over to the servers as needed, adjust comments as required and run the
     Leaves in place otherwise <br>
     Usage. `./userRemoval.sh remove jdoe` <br>
     Usage. `./userRemoval.sh remove jdoe home` <br>
-* **wpAIAuthorChecks.sh**, A BASH script for checking WordPress sites for plugins authored by AI. 
-  Should at least catch the lazily made ones with the AI chat listed as an author. <br> 
-  Arguments: <br> 
+* **wpAIAuthorChecks.sh**, A BASH script for checking WordPress sites for plugins authored by AI.
+  Should at least catch the lazily made ones with the AI chat listed as an author. <br>
+  Arguments: <br>
   - **help**, Display help message and exit
   - **check**, Check a provided Docroot for WordPress plugins with AI listed as the author.
     `Usage. ./wpAIAuthorChecks.sh check /path/to/docroot`
