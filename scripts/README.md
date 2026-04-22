@@ -22,6 +22,11 @@ Copy them over to the servers as needed, adjust comments as required and run the
   Ex. `./lockMysqlUser.sh lock jdoe localhost` <br>
 * **loginBackup.sh**, a BASH script for backing up `/etc/shadow` and `/etc/passwd`. Keeps backups for a week, removes older backups. <br>
   Usage, just run the script. Designed for cron. <br>
+* **mariadbUpgrader.sh**, A BASH script for upgrading mariadb on servers.
+  Takes a target version as an argument. Dumps and compresses non-system databases, then upgrades MariaDB. <br>
+  Will flag if disk space is over 75%. <br>
+  Usage, `./mariadbUpgrade.sh upgrade TARGET_VERSION` <br>
+  Ex. `./mariadbUpgrade.sh upgrade 11.4` <br>
 * **newMysqlUser.sh**, a BASH script for creating MySQL users. Takes a username and IP as an argument. <br>
   Usage, `./newMysqlUser.sh create USERNAME IP` <br>
   Ex. `./newMysqlUser.sh create jdoe 10.138.0.2` <br>
