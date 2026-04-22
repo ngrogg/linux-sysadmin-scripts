@@ -112,22 +112,7 @@ function runProgram(){
         "WP CLI installed, checking for updates" \
         "----------------------------------------------------"
 
-        #### Get current version of wp-cli
-        currentVersion=$(/usr/bin/wp --version --allow-root | grep 'WP-CLI' | awk '{print $2}')
-
-        #### Get latest version of wp-cli
-        latestVersion=$(curl --silent "https://api.github.com/repos/wp-cli/wp-cli/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
-
-        if [[ "$currentVersion" != "$latestVersion" ]]; then
-            printf "%s\n" \
-            "Updating WP CLI" \
-            "----------------------------------------------------"
-            sudo wp cli update --allow-root
-        else
-            printf "%s\n" \
-            "WP CLI update to date, moving on" \
-            "----------------------------------------------------"
-        fi
+        sudo wp cli update --allow-root
     fi
 
     ## Checksums
@@ -141,6 +126,18 @@ function runProgram(){
     "----------------------------------------------------"
 
     wp plugin verify-checksums --all --path=$filePath
+
+    printf "%s\n" \
+    "${yellow}IMPORTANT: Value Confirmation" \
+    "----------------------------------------------------" \
+    "Double check that above plugin checksums look okay" \
+    " " \
+    "Warnings are PROBABLY okay" \
+    "Use your best judgement" \
+    " " \
+    "Press enter to proceed or control + c to cancel${normal}"
+
+    read junkInput
 
     ### Themes - add once wp cli supports this
     #printf "%s\n" \
@@ -157,7 +154,7 @@ function runProgram(){
     printf "%s\n" \
     "${yellow}IMPORTANT: Value Confirmation" \
     "----------------------------------------------------" \
-    "Double check that above checksums look okay" \
+    "Double check that above core checksums look okay" \
     " " \
     "Warnings are PROBABLY okay" \
     "Use your best judgement" \
