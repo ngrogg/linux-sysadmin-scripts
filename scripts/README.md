@@ -27,6 +27,9 @@ Copy them over to the servers as needed, adjust comments as required and run the
   Ex. `./newMysqlUser.sh create jdoe 10.138.0.2` <br>
   Ex. `./newMysqlUser.sh create jdoe 127.0.0.1` <br>
   Ex. `./newMysqlUser.sh create jdoe localhost` <br>
+* **npmFinder.sh**, A BASH script for finding npm installs on servers. Must be run as root or with sudo. <br>
+  Usage, `sudo ./npmFinder.sh check` <br>
+  Also has a help function. <br>
 * **passgen.sh**, a BASH script for generating passwords. Probably not industry shattering, but good enough for most uses.<br>
   Usage, just run the script. <br>
 * **phpinfoChecker.sh**, A BASH script for finding occurrences of phpinfo() in a provided docroot. <br>
