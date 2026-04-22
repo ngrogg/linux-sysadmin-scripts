@@ -1,9 +1,9 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # New MySQL User
 # BASH script for creating a new MySQL user
-# Also works on MariaDB
 # By Nicholas Grogg
+# Revision: 20260422
 
 # Set exit on error
 set -e

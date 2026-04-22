@@ -1,11 +1,12 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
-# Clamscan
+# Run Clamscan
 # BASH script to scan directories
 # By Nicholas Grogg
+# Revision: 20260422
 
 # Set exit on error
-set -e
+#set -e
 
 # TODO Expand directories as needed
 # Array of directories to scan
@@ -22,7 +23,7 @@ fi
 # Append to log, use tee to output to screen
 echo "$(date +%Y%m%d) Beginning scan on ${targetDir[*]}" | tee -a "$logFile"
 
-# For loop to scan dirs, parallel is not used for resource usage concerns
+# For loop to scan dirs
 for directory in "${targetDir[@]}"; do
         echo "Scanning $directory" | tee -a "$logFile"
 

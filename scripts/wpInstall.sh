@@ -1,8 +1,9 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # WordPress Install
 # BASH script to install WordPress
 # By Nicholas Grogg
+# Revision: 20260422
 
 # Set exit on error
 set -e

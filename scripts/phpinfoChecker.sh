@@ -1,8 +1,9 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # PHPinfo Checker
 # BASH script to find files containing phpinfo() and sending an email
 # By Nicholas Grogg
+# Revision: 20260422
 
 # Set exit on error
 set -e

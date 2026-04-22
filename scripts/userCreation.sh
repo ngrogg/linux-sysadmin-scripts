@@ -1,8 +1,9 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # User Creation
 # BASH script to add an SSH user
 # By Nicholas Grogg
+# Revision: 20260422
 
 # Set exit on error
 set -e

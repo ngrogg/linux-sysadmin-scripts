@@ -1,9 +1,9 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # Lock MySQL User
 # BASH script to lock a MySQL user
 # By Nicholas Grogg
-# Revision: 20260119
+# Revision: 20260422
 
 # Set exit on error
 set -e

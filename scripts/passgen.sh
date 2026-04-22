@@ -1,8 +1,9 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
+# Passgen
 # A BASH script to generate a random password based on date
 # By Nicholas Grogg
-# Revision: 20260119
+# Revision: 20260422
 
 # Set exit on error
 set -e

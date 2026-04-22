@@ -1,9 +1,9 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # Login Backup
 # BASH script to backup /etc/shadow and /etc/passwd
-# Designed to be cronned
 # By Nicholas Grogg
+# Revision: 20260422
 
 # Set exit on error
 set -e

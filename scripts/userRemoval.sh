@@ -1,8 +1,9 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # User Removal
 # BASH script to remove an SSH user
 # By Nicholas Grogg
+# Revision: 20260422
 
 # Set exit on error
 set -e

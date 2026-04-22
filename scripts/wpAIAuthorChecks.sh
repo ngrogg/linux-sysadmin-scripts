@@ -1,8 +1,9 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # WP AI Author Checks
 # BASH script to check for WordPress plugins with AI as the author
 # By Nicholas Grogg
+# Revision: 20260422
 
 # Set exit on error
 set -e

@@ -1,9 +1,9 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # A BASH script to update WordPress
 # Takes a filepath as an argument
 # By Nicholas Grogg
-# Revision: 20260119
+# Revision: 20260422
 
 # Set exit on error
 set -e

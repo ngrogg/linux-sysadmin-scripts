@@ -1,8 +1,8 @@
 List of revisions + scripts
 
-Script:
-Revision:
-Change:
+Script: scripts/*.sh
+Revision: 20260422
+Change: Replaced /usr/bin/bash with /usr/bin/env bash
 
 Script: scripts/clamscan.sh
 Revision: 20260201
