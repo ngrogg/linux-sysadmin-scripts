@@ -5,6 +5,11 @@ These are scripts/programs that are only useful in specialized circumstances.
 Copy them over to the servers as needed, adjust comments as required and run the scripts. <br>
 
 ## Scripts
+* **apacheErrorSummarizer.pl**, A Perl script for viewing Apache errors logs and summarizing the most common errors.
+  Does not list IPs. Does not check rotated logs. <br>
+  Usage, `./apacheErrorSummarizer.pl --top #` <br>
+  Ex. `./apacheErrorSummarizer.pl --top 15` <br>
+  Also has a `--help` function.
 * **curltest.php**, A php script designed to test curls to an external URL.
   Primarily used for testing if a firewall is preventing an external connection.
   Usage is a matter of configuring the URL and setting the curl options as true (1) or false (0).
@@ -32,6 +37,7 @@ Copy them over to the servers as needed, adjust comments as required and run the
   Ex. `./newMysqlUser.sh create jdoe 10.138.0.2` <br>
   Ex. `./newMysqlUser.sh create jdoe 127.0.0.1` <br>
   Ex. `./newMysqlUser.sh create jdoe localhost` <br>
+* **nginxErrorSummarizer.pl**, A version of the `Apache Error Checker` for Nginx. Functions more or less the same.
 * **npmFinder.sh**, A BASH script for finding npm installs on servers. Must be run as root or with sudo. <br>
   Usage, `sudo ./npmFinder.sh check` <br>
   Also has a help function. <br>
