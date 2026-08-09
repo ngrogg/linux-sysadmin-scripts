@@ -31,8 +31,7 @@ function helpFunction(){
     "* Update site with wp cli" \
     "* Takes a document root as an argument" \
     "* Installs wp-cli if not found" \
-    "* By default will not run as root" \
-    "* If desired, see TODO comments" \
+    "* Can run as root or non-root" \
     " " \
     "Usage. ./wpUpdate.sh update /path/to/docroot" \
     "Ex. ./wpUpdate.sh update /var/www/html"
@@ -45,7 +44,10 @@ function runProgram(){
     "----------------------------------------------------"
 
     ## Variables
-    filePath=$1
+    ### Filepath to Docroot
+    local filePath="$1"
+    ### Bool for root, default value of false
+    local rootCheck=0
 
     ## Checks
     ### Check if filePath passed
@@ -73,13 +75,33 @@ function runProgram(){
         exit 1
     fi
 
+    ### Is script running as root?
+    printf "%s\n" \
+    "Checking if user is root "\
+    "----------------------------------------------------" \
+    " "
+    if [[ "$EUID" -eq 0 ]]; then
+        printf "%s\n" \
+        "${green}User is root "\
+        "----------------------------------------------------" \
+        "Proceeding${normal}" \
+        " "
+
+        #### Set rootCheck to true
+        rootCheck=1
+    else
+        "${green}User is not root "\
+        "----------------------------------------------------" \
+        "Proceeding${normal}" \
+        " "
+    fi
+
     ## Confirmation
     printf "%s\n" \
     "${yellow}IMPORTANT: Value Confirmation" \
     "----------------------------------------------------" \
-    "Hostname: " "$(hostname)" \
-    " " \
-    "Docroot to update: " "$filePath" \
+    "Hostname:          $(hostname)" \
+    "Docroot to update: $filePath" \
     " " \
     "Double check that values are correct." \
     "Double check that snapshots were taken." \
@@ -125,7 +147,11 @@ function runProgram(){
     "Plugin Checksums" \
     "----------------------------------------------------"
 
-    wp plugin verify-checksums --all --path=$filePath
+    if [[ $rootCheck -eq 1 ]]; then
+        wp plugin verify-checksums --all --path=$filePath --allow-root
+    else
+        wp plugin verify-checksums --all --path=$filePath
+    fi
 
     printf "%s\n" \
     "${yellow}IMPORTANT: Value Confirmation" \
@@ -149,7 +175,12 @@ function runProgram(){
     "Core Checksums" \
     "----------------------------------------------------"
 
-    wp core verify-checksums --include-root --path=$filePath
+    if [[ $rootCheck -eq 1 ]]; then
+        wp core verify-checksums --include-root --path=$filePath --allow-root
+    else
+        wp core verify-checksums --include-root --path=$filePath
+    fi
+
 
     printf "%s\n" \
     "${yellow}IMPORTANT: Value Confirmation" \
@@ -173,27 +204,33 @@ function runProgram(){
     "Updating Plugins" \
     "----------------------------------------------------"
 
-    #/usr/bin/wp plugin update --all --path=$filePath --allow-root
-    # TODO If planning to run as root, uncomment above and comment below
-    /usr/bin/wp plugin update --all --path=$filePath
+    if [[ $rootCheck -eq 1 ]]; then
+        /usr/bin/wp plugin update --all --path=$filePath --allow-root
+    else
+        /usr/bin/wp plugin update --all --path=$filePath
+    fi
 
     ### Update site themes
     printf "%s\n" \
     "Updating Themes" \
     "----------------------------------------------------"
 
-    #/usr/bin/wp theme update --all --skip-plugins --path=$filePath --allow-root
-    # TODO If planning to run as root, uncomment above and comment below
-    /usr/bin/wp theme update --all --skip-plugins --path=$filePath
+    if [[ $rootCheck -eq 1 ]]; then
+        /usr/bin/wp theme update --all --skip-plugins --path=$filePath --allow-root
+    else
+        /usr/bin/wp theme update --all --skip-plugins --path=$filePath
+    fi
 
     ## Update site core
     printf "%s\n" \
     "Updating WP Core" \
     "----------------------------------------------------"
 
-    #/usr/bin/wp core update --skip-plugins --path=$filePath --allow-root
-    # TODO If planning to run as root, uncomment above and comment below
-    /usr/bin/wp core update --skip-plugins --path=$filePath
+    if [[ $rootCheck -eq 1 ]]; then
+        /usr/bin/wp core update --skip-plugins --path=$filePath --allow-root
+    else
+        /usr/bin/wp core update --skip-plugins --path=$filePath
+    fi
 }
 
 # Main, read passed flags
