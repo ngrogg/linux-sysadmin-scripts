@@ -1,5 +1,13 @@
 List of revisions + scripts
 
+Script:
+Revision:
+Change:
+
+Script: scripts/wpUpdate.sh
+Revision: 20260808
+Change: Added logic for handling script being run as root or non-root.
+
 Script: scripts/*.sh
 Revision: 20260422
 Change: Replaced /usr/bin/bash with /usr/bin/env bash

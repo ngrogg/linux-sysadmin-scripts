@@ -3,7 +3,7 @@
 # A BASH script to update WordPress
 # Takes a filepath as an argument
 # By Nicholas Grogg
-# Revision: 20260422
+# Revision: 20260808
 
 # Set exit on error
 set -e
