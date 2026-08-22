@@ -3,7 +3,7 @@
 # A BASH script to update WordPress
 # Takes a filepath as an argument
 # By Nicholas Grogg
-# Revision: 20260808
+# Revision: 20260821
 
 # Set exit on error
 set -e
@@ -27,6 +27,14 @@ function helpFunction(){
     "help/Help" \
     "* Display this help message and exit" \
     " " \
+    "auto/Auto " \
+    "Find and update all WP sites at /var/www with wp-cli" \
+    "Minimal output/checks " \
+    "Should only be run after guided update function" \
+    "Can be run as root or with root perms" \
+    " " \
+    "Usage. ./wpUpdate.sh auto" \
+    " " \
     "update/Update" \
     "* Update site with wp cli" \
     "* Takes a document root as an argument" \
@@ -35,6 +43,47 @@ function helpFunction(){
     " " \
     "Usage. ./wpUpdate.sh update /path/to/docroot" \
     "Ex. ./wpUpdate.sh update /var/www/html"
+}
+
+# Function to update ALL WordPress sites at /var/www
+function autoUpdate(){
+    ## If wp-cli doesn't exist install it
+    if [[ ! -f "/usr/local/bin/wp" ]]; then
+        ### Download wp-cli
+        curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+
+        ### Make wp-cli executable
+        sudo chmod +x wp-cli.phar
+
+        ### Move executable to path so it can be used with 'wp'
+        sudo mv wp-cli.phar /usr/local/bin/wp
+
+    ## Else attempt to update wp-cli
+    else
+        sudo /usr/local/bin/wp cli update --allow-root --yes
+    fi
+
+    ## If run as root
+    if [[ "$EUID" -eq 0 ]]; then
+        ### While loop to find and update WordPress sites
+        while IFS= read -r -d '' filePath; do
+            #### Set docroot, update site w/ wp-cli
+            /usr/local/bin/wp plugin update --allow-root --all --path="$filePath"
+            /usr/local/bin/wp theme update --allow-root --all --skip-plugins --path="$filePath"
+            /usr/local/bin/wp core update --allow-root --skip-plugins --path="$filePath"
+            /usr/local/bin/wp core update-db --allow-root --path="$filePath"
+        done < <(find /var/www -maxdepth 4 -type f -name "wp-settings.php" -printf '%h\0')
+    else
+        ### While loop to find and update WordPress sites
+        while IFS= read -r -d '' filePath; do
+            #### Set docroot, update site w/ wp-cli
+            /usr/local/bin/wp plugin update --all --path="$filePath"
+            /usr/local/bin/wp theme update --all --skip-plugins --path="$filePath"
+            /usr/local/bin/wp core update --skip-plugins --path="$filePath"
+            /usr/local/bin/wp core update-db --path="$filePath"
+        done < <(find /var/www -maxdepth 4 -type f -name "wp-settings.php" -printf '%h\0')
+    fi
+
 }
 
 # Function to run program
@@ -250,6 +299,10 @@ case "$1" in
     helpFunction
     exit
     ;;
+[Aa]uto)
+    autoUpdate
+    ;;
+
 [Uu]pdate)
     printf "%s\n" \
     "Running script" \

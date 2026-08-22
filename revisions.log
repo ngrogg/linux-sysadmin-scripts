@@ -5,6 +5,10 @@ Revision:
 Change:
 
 Script: scripts/wpUpdate.sh
+Revision: 20260821
+Change: Added auto function to update all WP sites in /var/www
+
+Script: scripts/wpUpdate.sh
 Revision: 20260808
 Change: Added logic for handling script being run as root or non-root.
 

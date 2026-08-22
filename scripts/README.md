@@ -94,3 +94,6 @@ Copy them over to the servers as needed, adjust comments as required and run the
   For servers where the site and database files are on the same server pass localhost or 127.0.0.1 for the web server IP. <br>
 * **wpUpdate.sh**, a BASH script for updating WordPress sites. Takes a site webroot as an argument. <br>
   Usage, `./wpUpdate.sh /path/to/webroot`<br>
+  Also has a function for updating all sites at `/var/www`. <br>
+  Minimal checks, should only be run if guided update function runs successfully. <br>
+  Usage. `./wpUpdate.sh auto` <br>
