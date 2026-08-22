@@ -3,7 +3,7 @@
 # Login Backup
 # BASH script to backup /etc/shadow and /etc/passwd
 # By Nicholas Grogg
-# Revision: 20260422
+# Revision: 20260821
 
 # Set exit on error
 set -e

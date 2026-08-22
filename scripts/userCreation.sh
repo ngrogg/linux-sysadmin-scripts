@@ -3,7 +3,7 @@
 # User Creation
 # BASH script to add an SSH user
 # By Nicholas Grogg
-# Revision: 20260422
+# Revision: 20260821
 
 # Set exit on error
 set -e
@@ -46,13 +46,13 @@ function runProgram(){
 
     ### Variables
     #### Username to add
-    username=$1
+    local username="$1"
 
     #### Check if Admin value was passed
     if [[ $2 =~ [Aa]+[Dd]+[Mm]+[Ii]+[Nn] ]]; then
-            addAdmin="yes"
+            local addAdmin="yes"
     else
-            addAdmin="no"
+            local addAdmin="no"
     fi
 
     ### Validate user input
@@ -160,7 +160,7 @@ case "$1" in
     printf "%s\n" \
     "Running script" \
     "----------------------------------------------------"
-    runProgram $2 $3
+    runProgram "$2" "$3"
     ;;
 *)
     printf "%s\n" \

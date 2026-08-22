@@ -3,7 +3,7 @@
 # WP AI Author Checks
 # BASH script to check for WordPress plugins with AI as the author
 # By Nicholas Grogg
-# Revision: 20260422
+# Revision: 20260821
 
 # Set exit on error
 set -e
@@ -46,10 +46,10 @@ function runProgram(){
 
     ## Variables
     ### Docroot to check
-    docroot=$1
+    local docroot="$1"
 
     ### Array of keywords to check for, expand as needed
-    aiKeywordArray=(
+    local aiKeywordArray=(
             "Bard"
             "ChatGPT"
             "Chatsonic"
@@ -69,7 +69,7 @@ function runProgram(){
 
     ## Validation
     ### Was a Docroot passed?
-    if [[ -z $docroot ]]; then
+    if [[ -z "$docroot" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - A docroot wasn't passed!"  \
         "----------------------------------------------------" \
@@ -88,7 +88,7 @@ function runProgram(){
     fi
 
     ### Does Docroot exist?
-    if [[ ! -d $docroot ]]; then
+    if [[ ! -d "$docroot" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - Docroot doesn't exist!"  \
         "----------------------------------------------------" \
@@ -147,10 +147,10 @@ function runProgram(){
     ### Is WP CLI up to date? Update if not
     if [[ -f "/usr/bin/wp" ]]; then
         #### Get current version of wp
-        currentVersion=$(wp --version | grep 'WP-CLI' | awk '{print $2}')
+        local currentVersion=$(wp --version | grep 'WP-CLI' | awk '{print $2}')
 
         #### Get latest version of wp-cli
-        latestVersion=$(curl --silent "https://api.github.com/repos/wp-cli/wp-cli/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+        local latestVersion=$(curl --silent "https://api.github.com/repos/wp-cli/wp-cli/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
 
         #### Compare variables, update if needed
         if [[ "$currentVersion" != "$latestVersion" ]]; then
@@ -209,7 +209,7 @@ case "$1" in
     printf "%s\n" \
     "Running script" \
     "----------------------------------------------------"
-    runProgram $2
+    runProgram "$2"
     ;;
 *)
     printf "%s\n" \

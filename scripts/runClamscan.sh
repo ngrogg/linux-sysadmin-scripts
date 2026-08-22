@@ -3,17 +3,17 @@
 # Run Clamscan
 # BASH script to scan directories
 # By Nicholas Grogg
-# Revision: 20260422
+# Revision: 20260821
 
 # Set exit on error
 #set -e
 
 # TODO Expand directories as needed
 # Array of directories to scan
-targetDir=("/bin" "/lib" "/opt" "/sbin" "/tmp" "/etc" "/usr" "/var" "/home")
+local targetDir=("/bin" "/lib" "/opt" "/sbin" "/tmp" "/etc" "/usr" "/var" "/home")
 
 # Log file to append output to
-logFile="/var/log/clamav/clamscan.log"
+local logFile="/var/log/clamav/clamscan.log"
 
 # Create log file if it doesn't exist
 if [[ ! -f /var/log/clamav/clamscan.log ]]; then

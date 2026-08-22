@@ -3,7 +3,7 @@
 # MariaDB Upgrader
 # BASH script for upgrading MariaDB
 # By Nicholas Grogg
-# Revision: 20260319
+# Revision: 20260821
 
 # Color variables
 ## Errors
@@ -51,15 +51,15 @@ function runProgram(){
 
     ## Variables
     ### Current version of MariaDB installed
-    techCurrentVersion=$(mariadb --version | awk '{print $5}' | cut -d'.' -f1-2)
+    local techCurrentVersion="$(mariadb --version | awk '{print $5}' | cut -d'.' -f1-2)"
     ### Version of database tech to upgrade
-    techTargetVersion=$1
+    local techTargetVersion="$1"
     ### Variable for date script is run
-    runDate=$(date +%Y%m%d)
+    local runDate="$(date +%Y%m%d)"
 
     ## Validation
     ### Is techTargetVersion empty?
-    if [[ -z $techTargetVersion ]]; then
+    if [[ -z "$techTargetVersion" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - MariaDB Target Version null!" \
         "----------------------------------------------------" \
@@ -111,7 +111,7 @@ function runProgram(){
     # gsub(), global substitution
     # "%","",$5, replace all % characters with nothing, only apply to field $5
     # print $5, print field 5
-    diskUsage=$(df -P / | awk 'NR==2 {gsub("%","",$5); print $5}')
+    local diskUsage=$(df -P / | awk 'NR==2 {gsub("%","",$5); print $5}')
 
     #### Flag if usage over 75%
     if [[ "$diskUsage" -gt 75 ]]; then
@@ -145,12 +145,9 @@ function runProgram(){
     "${yellow}IMPORTANT: User Input Required" \
     "----------------------------------------------------" \
     "Value Confirmation " \
-    " " \
-    "Hostname: " "$(hostname)" \
-    " " \
-    "Current MariaDB version: " "$techCurrentVersion" \
-    " " \
-    "Target MariaDB version:" "$techTargetVersion" \
+    "Hostname:                $(hostname)" \
+    "Current MariaDB version: $techCurrentVersion" \
+    "Target MariaDB version:  $techTargetVersion" \
     " " \
     "Double check that values are correct." \
     "Double check that snapshots were taken." \
@@ -403,15 +400,15 @@ function runProgram(){
             "----------------------------------------------------" \
             "File differences found" \
             " " \
-            "Filename " "/etc/my.cnf" \
+            "Filename: /etc/my.cnf" \
             " " \
             "Open new SSH session" \
             " " \
             "Check new vs existing file" \
             " " \
-            "Config filepath" "/etc/my.cnf" \
+            "Config filepath: /etc/my.cnf" \
             " " \
-            "Backup filepath" "mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate/my.cnf" \
+            "Backup filepath: mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate/my.cnf" \
             "Differences: ${normal}" \
             " "
 
@@ -451,15 +448,15 @@ function runProgram(){
                 "----------------------------------------------------" \
                 "File differences found" \
                 " " \
-                "Filename " "$file" \
+                "Filename: $file" \
                 " " \
                 "Open new SSH session" \
                 " " \
                 "Check new vs existing file" \
                 " " \
-                "Config filepath" "/etc/my.cnf.d/$file" \
+                "Config filepath: /etc/my.cnf.d/$file" \
                 " " \
-                "Backup filepath" "mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate/my.cnf.d/$file" \
+                "Backup filepath: mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate/my.cnf.d/$file" \
                 "Differences: ${normal}" \
                 " "
 
@@ -502,15 +499,15 @@ function runProgram(){
                 "----------------------------------------------------" \
                 "File differences found" \
                 " " \
-                "Filename " "$file" \
+                "Filename: $file" \
                 " " \
                 "Open new SSH session" \
                 " " \
                 "Check new vs existing file" \
                 " " \
-                "Current config filepath" "/etc/mysql/$file" \
+                "Current config filepath: /etc/mysql/$file" \
                 " " \
-                "Backup config filepath" "mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate/mysql/$file" \
+                "Backup config filepath: mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate/mysql/$file" \
                 " " \
                 "Differences: ${normal}" \
                 " "
@@ -578,7 +575,7 @@ case "$1" in
     "----------------------------------------------------" \
     " "
 
-    runProgram $2
+    runProgram "$2"
     ;;
 *)
     printf "%s\n" \

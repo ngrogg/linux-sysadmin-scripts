@@ -3,7 +3,7 @@
 # Lock MySQL User
 # BASH script to lock a MySQL user
 # By Nicholas Grogg
-# Revision: 20260422
+# Revision: 20260821
 
 # Set exit on error
 set -e
@@ -49,8 +49,8 @@ function runProgram(){
     "----------------------------------------------------"
 
     ## Variables
-    databaseUser=$1
-    databaseIP=$2
+    local databaseUser="$1"
+    local databaseIP="$2"
 
     ## Validation
     ### Is script running as root?
@@ -88,7 +88,7 @@ function runProgram(){
     fi
 
     ### Check if database user was passed
-    if [[ -z $databaseUser ]]; then
+    if [[ -z "$databaseUser" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - A Database User wasn't passed!"  \
         "----------------------------------------------------" \
@@ -101,7 +101,7 @@ function runProgram(){
     fi
 
     ### Check if IP was passed
-    if [[ -z $databaseIP ]]; then
+    if [[ -z "$databaseIP" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - An IP wasn't passed!"  \
         "----------------------------------------------------" \
@@ -117,8 +117,9 @@ function runProgram(){
     printf "%s\n" \
     "${yellow}IMPORTANT: Value Confirmation" \
     "----------------------------------------------------" \
-    "Database User: " "$databaseUser" \
-    "Database IP: " "$databaseIP" \
+    "Database User: $databaseUser" \
+    "Database IP:   $databaseIP" \
+    " " \
     "If all clear, press enter to proceed or ctrl-c to cancel${normal}" \
     " "
 
@@ -172,7 +173,7 @@ case "$1" in
     printf "%s\n" \
     "Running script" \
     "----------------------------------------------------"
-    runProgram $2 $3
+    runProgram "$2" "$3"
     ;;
 *)
     printf "%s\n" \

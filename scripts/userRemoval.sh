@@ -3,7 +3,7 @@
 # User Removal
 # BASH script to remove an SSH user
 # By Nicholas Grogg
-# Revision: 20260422
+# Revision: 20260821
 
 # Set exit on error
 set -e
@@ -45,13 +45,13 @@ function runProgram(){
 
     ### Variables
     #### Username to remove
-    username=$1
+    local username="$1"
 
     #### Check if home argument was passed
     if [[ $2 =~ [Hh]+[Oo]+[Mm]+[Ee] ]]; then
-            removeHome="Yes"
+            local removeHome="Yes"
     else
-            removeHome="No"
+            local removeHome="No"
     fi
 
     ### Validate user input
@@ -135,7 +135,7 @@ case "$1" in
     printf "%s\n" \
     "Running script" \
     "----------------------------------------------------"
-    runProgram $2 $3
+    runProgram "$2" "$3"
     ;;
 *)
     printf "%s\n" \

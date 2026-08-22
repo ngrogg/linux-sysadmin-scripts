@@ -3,7 +3,7 @@
 # WordPress Install
 # BASH script to install WordPress
 # By Nicholas Grogg
-# Revision: 20260422
+# Revision: 20260821
 
 # Set exit on error
 set -e
@@ -45,14 +45,14 @@ function web(){
 
     ## Variables
     ### Webroot to install
-    webroot=$1
+    local webroot="$1"
 
     ### Is server DEB or RPM based?
     ### Check if using apt (DEB) or dnf (RPM), set syslog based on output
     if [[ -e /usr/bin/dnf ]]; then
-        packageManager="RPM"
+        local packageManager="RPM"
     elif [[ -e /usr/bin/apt ]]; then
-        packageManager="DEB"
+        local packageManager="DEB"
     else
         #### This message shouldn't be reachable with our configs and may suggest a more serious issue
         printf "%s\n" \
@@ -83,7 +83,7 @@ function web(){
     fi
 
     ### Was a webroot passed?
-    if [[ -z $webroot ]]; then
+    if [[ -z "$webroot" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - A webroot wasn't passed!"  \
         "----------------------------------------------------" \
@@ -102,7 +102,7 @@ function web(){
     fi
 
     ### Does Webroot filepath exist?
-    if [[ -d $webroot ]]; then
+    if [[ -d "$webroot" ]]; then
             #### Is Webroot directory empty?
             if [[ "$(ls -A $webroot)" ]]; then
                 printf "%s\n" \
@@ -132,7 +132,8 @@ function web(){
     printf "%s\n" \
     "${yellow}IMPORTANT: Value Confirmation" \
     "----------------------------------------------------" \
-    "Webroot: " "$webroot" \
+    "Webroot: $webroot" \
+    " " \
     "If all clear, press enter to proceed or ctrl-c to cancel${normal}" \
     " "
     read junkInput
@@ -293,9 +294,9 @@ function database(){
     "----------------------------------------------------"
 
     ## Variables
-    webIP=$1
-    databaseName=$2
-    databaseUser=$3
+    local webIP="$1"
+    local databaseName="$2"
+    local databaseUser="$3"
 
     ## Validation
     ### Is script running as root?
@@ -318,7 +319,7 @@ function database(){
     fi
 
     ### Check if web IP was passed
-    if [[ -z $webIP ]]; then
+    if [[ -z "$webIP" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - A Web IP wasn't passed!"  \
         "----------------------------------------------------" \
@@ -331,7 +332,7 @@ function database(){
     fi
 
     ### Check if database name was passed
-    if [[ -z $databaseName ]]; then
+    if [[ -z "$databaseName" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - A Database Name wasn't passed!"  \
         "----------------------------------------------------" \
@@ -344,7 +345,7 @@ function database(){
     fi
 
     ### Check if database user was passed
-    if [[ -z $databaseUser ]]; then
+    if [[ -z "$databaseUser" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - A Database User wasn't passed!"  \
         "----------------------------------------------------" \
@@ -360,9 +361,10 @@ function database(){
     printf "%s\n" \
     "${yellow}IMPORTANT: Value Confirmation" \
     "----------------------------------------------------" \
-    "Web IP: " "$webIP" \
-    "Database Name: " "$databaseName" \
-    "Database User: " "$databaseUser" \
+    "Web IP:        $webIP" \
+    "Database Name: $databaseName" \
+    "Database User: $databaseUser" \
+    " " \
     "If all clear, press enter to proceed or ctrl-c to cancel${normal}" \
     " "
     read junkInput
@@ -372,7 +374,7 @@ function database(){
 
     ## Does Database exist?
     ### Run query
-    databaseCheckQuery=$(mysql -u root -p"$databasePass" -e "SHOW DATABASES LIKE \"$databaseName\"")
+    local databaseCheckQuery=$(mysql -u root -p"$databasePass" -e "SHOW DATABASES LIKE \"$databaseName\"")
 
     ### Check if checkQuery null or not, exit if so
     if [[ $databaseCheckQuery ]]; then
@@ -393,7 +395,7 @@ function database(){
 
     ## Does Database User exist?
     ### Run query
-    userCheckQuery=$(mysql -u root -p"$databasePass" -e "SELECT user,host FROM mysql.user WHERE user like \"$databaseUser\" AND host like \"$welshIP\"")
+    local userCheckQuery=$(mysql -u root -p"$databasePass" -e "SELECT user,host FROM mysql.user WHERE user like \"$databaseUser\" AND host like \"$welshIP\"")
 
     ### Check if checkQuery null or not, exit if so
     if [[ $userCheckQuery ]]; then
@@ -431,11 +433,11 @@ function database(){
     mysql -u root -p"$databasePass" -e "FLUSH PRIVILEGES"
 
     ### Write output to text file, append in case script is run multiple times
-    echo "$(date)" >> /var/log/WordPressOutput.log
-    echo "Database Name: $databaseName" >> /var/log/WordPressOutput.log
-    echo "Username: $databaseUser" >> /var/log/WordPressOutput.log
-    echo "Password: $userPass" >> /var/log/WordPressOutput.log
-    echo "Database Host: $(hostname -I)" >> /var/log/WordPressOutput.log
+    echo "$(date)"
+    echo "Database Name: $databaseName"
+    echo "Username: $databaseUser"
+    echo "Password: $userPass"
+    echo "Database Host: $(hostname -I)"
 
     ## Prompt user on next steps
     printf "%s\n" \
@@ -444,11 +446,12 @@ function database(){
     "WordPress database and user created" \
     "If not already done, add hostfile entry for site" \
     "Load site in browser and finish install" \
-    "Use values listed below for install prompts.${normal}" \
+    " " \
+    "Note values as they will not be stored " \
+    " " \
+    "Use values listed above for install prompts.${normal}" \
     " "
 
-    ## Output WordPress log for copying
-    cat /var/log/WordPressOutput.log
 }
 
 # Main, read passed flags
@@ -472,13 +475,13 @@ case "$1" in
     printf "%s\n" \
     "Running script" \
     "----------------------------------------------------"
-    web $2
+    web "$2"
     ;;
 [Dd]atabase)
     printf "%s\n" \
     "Running script" \
     "----------------------------------------------------"
-    database $2 $3 $4
+    database "$2" "$3" "$4"
     ;;
 *)
     printf "%s\n" \

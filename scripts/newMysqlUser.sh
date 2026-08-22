@@ -3,7 +3,7 @@
 # New MySQL User
 # BASH script for creating a new MySQL user
 # By Nicholas Grogg
-# Revision: 20260422
+# Revision: 20260821
 
 # Set exit on error
 set -e
@@ -43,8 +43,8 @@ function runProgram(){
     "----------------------------------------------------"
 
     ## Variables
-    databaseUser=$1
-    webIP=$2
+    local databaseUser="$1"
+    local webIP="$2"
 
     ## Validation
     ### Is script running as root?
@@ -82,7 +82,7 @@ function runProgram(){
     fi
 
     ### Check if database user was passed
-    if [[ -z $databaseUser ]]; then
+    if [[ -z "$databaseUser" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - A Database User wasn't passed!"  \
         "----------------------------------------------------" \
@@ -95,7 +95,7 @@ function runProgram(){
     fi
 
     ### Check if web IP was passed
-    if [[ -z $webIP ]]; then
+    if [[ -z "$webIP" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - A Web IP wasn't passed!"  \
         "----------------------------------------------------" \
@@ -126,7 +126,7 @@ function runProgram(){
 
     ## Check if user exists
     ### Run query
-    checkQuery=$(mysql -u root -p"$databasePass" -e "SELECT user,host FROM mysql.user WHERE user like \"$databaseUser\" AND host like \"$welshIP\"")
+    local checkQuery=$(mysql -u root -p"$databasePass" -e "SELECT user,host FROM mysql.user WHERE user like \"$databaseUser\" AND host like \"$welshIP\"")
 
     ### Check if checkQuery null or not, exit if so
     if [[ $checkQuery ]]; then
@@ -146,7 +146,7 @@ function runProgram(){
 
     ## Create user
     ### Generate a user password
-    userPass=$(date +%s | sha256sum | base64 | head -c 30)
+    local userPass=$(date +%s | sha256sum | base64 | head -c 30)
     userPass+=$(((RANDOM%1000+1)))
     userPass+="!"
 
@@ -163,9 +163,9 @@ function runProgram(){
     printf "%s\n" \
     "${yellow}IMPORTANT: User created" \
     "----------------------------------------------------" \
-    "Database User: " "$databaseUser" \
-    "Web IP: " "$webIP" \
-    "Password: " "$userPass" \
+    "Database User: $databaseUser" \
+    "Web IP:        $webIP" \
+    "Password:      $userPass" \
     " " \
     "Note user info, it will not be saved on the server!"
     "Press enter to proceed once info saved${normal}" \
@@ -195,7 +195,7 @@ case "$1" in
     printf "%s\n" \
     "Running script" \
     "----------------------------------------------------"
-    runProgram $2 $3
+    runProgram "$2" "$3"
     ;;
 *)
     printf "%s\n" \

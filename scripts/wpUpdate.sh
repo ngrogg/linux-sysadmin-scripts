@@ -307,7 +307,7 @@ case "$1" in
     printf "%s\n" \
     "Running script" \
     "----------------------------------------------------"
-    runProgram $2
+    runProgram "$2"
     ;;
 *)
     printf "%s\n" \

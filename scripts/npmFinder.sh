@@ -3,7 +3,7 @@
 # NPM Finder
 # BASH script to find npm installs and list modules
 # By Nicholas Grogg
-# Revision: 20260422
+# Revision: 20260821
 
 # Color variables
 ## Errors
@@ -77,7 +77,7 @@ function runProgram(){
     ###
     ### Hides any lingering permission or read errors.
     ### 2>/dev/null
-    npmFilepaths=$(find / \( -path /proc -o -path /sys -o -path /dev -o -path /run \) -prune -o \( \( -type f -executable -name "npm" \) -o \( -type l -name "npm" \) \) -print 2>/dev/null)
+    local npmFilepaths=$(find / \( -path /proc -o -path /sys -o -path /dev -o -path /run \) -prune -o \( \( -type f -executable -name "npm" \) -o \( -type l -name "npm" \) \) -print 2>/dev/null)
 
     ## If no NPM instances found, exit
     if [[ -z "$npmFilepaths" ]]; then
@@ -101,8 +101,8 @@ function runProgram(){
             printf "%s\n" \
             "NPM Instance Information" \
             "----------------------------------------------------" \
-            "NPM Filepath: " "$npmInstall" \
-            "NPM Version: " "$npmVersion" \
+            "NPM Filepath: $npmInstall" \
+            "NPM Version:  $npmVersion" \
             " " \
             "Packages: "
 

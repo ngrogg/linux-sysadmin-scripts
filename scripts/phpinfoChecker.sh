@@ -3,7 +3,7 @@
 # PHPinfo Checker
 # BASH script to find files containing phpinfo() and sending an email
 # By Nicholas Grogg
-# Revision: 20260422
+# Revision: 20260821
 
 # Set exit on error
 set -e
@@ -54,11 +54,11 @@ function runProgram(){
     "----------------------------------------------------"
 
     ## Assign webroot to variable
-    docroot=$1
+    local docroot="$1"
 
     ## Validation
     ### Does Docroot exist?
-    if [[ -d $docroot ]]; then
+    if [[ -d "$docroot" ]]; then
         printf "%s\n" \
         "${green}Docroot exists"  \
         "----------------------------------------------------" \
@@ -127,7 +127,7 @@ function runProgram(){
 
     ### Populate fileCount variable
     #### Empty file appeared as one line via wc -l and wc -c, used wc -w for word counts to populate count
-    fileCount=$(wc -w /root/scripts/phpinfoCheck/phpinfoListToCheck.txt | awk '{print $1}')
+    local fileCount=$(wc -w /root/scripts/phpinfoCheck/phpinfoListToCheck.txt | awk '{print $1}')
 
     ### If file count of list > 0, parse list and send
     if [[ $fileCount -gt 0 ]]; then
@@ -170,7 +170,7 @@ function runProgram(){
         echo "For reference a phpinfo() file will look something like this:" >> /root/scripts/phpinfoCheck/phpinfoListToCheck.txt
         echo "<?php phpinfo(); ?>" >> /root/scripts/phpinfoCheck/phpinfoListToCheck.txt
 
-        #TODO: Add your sender and recipient as needed
+        #TODO: Add sender and recipient as needed
         #### Open ticket
         cat /root/scripts/phpinfoCheck/phpinfoListToCheck.txt | mail -s "Possible instances of phpinfo() found on $(hostname)" -r "SENDER" recipient@example.com
 
