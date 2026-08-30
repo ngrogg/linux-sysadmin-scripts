@@ -3,14 +3,16 @@
 use strict;
 use warnings;
 
+use POSIX qw(strftime);
+
 # Secure Log Analyzer
 # Perl script to analyze Linux secure/auth.log files
 # By Nicholas Grogg
-# Revision: TODO
+# Revision: 20260829
 
 # Function to run program
 sub runProgram {
-    print "Secure Log Analyzer\n";
+    print "Secure Log Analyzer - ", strftime('%Y%m%d', localtime), "\n";
     print "----------------------------------------------------\n";
 
     ## Variables

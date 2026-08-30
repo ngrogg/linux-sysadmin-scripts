@@ -56,9 +56,7 @@ Copy them over to the servers as needed, adjust comments as required and run the
 * **runClamscan.sh**, A BASH script for running clamscans on directories. Designed for crons.
   Usage, just run the script.
 * **secureLogAnalyzer**, A Perl script for checking `/var/log/secure` and `/var/log/auth.log` for failed logins.
-  Will check for both, prefers `/var/log/secure` if both exist. <br>
-  Usage, just run the script. <br>
-  **Note:** Will probably need run as root or with sudo perms depending on configurations.
+  See README.md in folder for more information.
 * **smtpTest.pl**, A perl script for testing SMTP connections on a server. Two sections to fill out.
   First is the SMTP server section, which includes the host, port, user, password and addressee.
   Second section is to fill in the email From, To, Subject and Body. Afterwards run the script. <br>

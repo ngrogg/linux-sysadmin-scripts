@@ -4,6 +4,10 @@ Script:
 Revision:
 Change:
 
+Script: scripts/secureLogAnalyzer/secureLogAnalyzer.pl
+Revision: 20260829
+Change: Initial version
+
 Script: scripts/*.sh
 Revision: 20260821
 Change: Changed variables to local variables. Wrapped strings in double quotes.
