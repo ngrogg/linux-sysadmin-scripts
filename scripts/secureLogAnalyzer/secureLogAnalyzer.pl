@@ -87,7 +87,6 @@ sub runProgram {
             next;
         }
 
-
         ### Invalid user attempts
         if ($line =~ /Invalid user (\S+) from (\S+)/) {
 
@@ -114,7 +113,6 @@ sub runProgram {
             next;
         }
 
-
         ### Successful SSH authentication
         if ($line =~ /Accepted (?:password|publickey|keyboard-interactive\/pam) for (\S+) from (\S+)/) {
 
@@ -124,7 +122,6 @@ sub runProgram {
             #### This line has been handled, so continue with the next line of the log
             next;
         }
-
 
         ### Generic authentication failure
         if ($line =~ /authentication failure/i) {
@@ -136,7 +133,6 @@ sub runProgram {
 
     # Close the authentication log after all lines have been processed.
     close($fh);
-
 
     ## Output
     ### Add a blank line before the report.
@@ -184,10 +180,8 @@ sub runProgram {
         print "No failed authentication IP addresses found.\n";
     }
 
-
     ### Add a blank line before the username section.
     print "\n";
-
 
     print "Users Associated With Failures\n";
     print "----------------------------------------------------\n";
@@ -218,7 +212,6 @@ sub runProgram {
 
     ### Add a final blank line after the report.
     print "\n";
-
 }
 
 # Run the main program function.
