@@ -11,7 +11,7 @@ use POSIX qw(strftime);
 # Revision: 20260829
 
 # Function to run program
-sub runProgram {
+sub run_program {
     print "Secure Log Analyzer - ", strftime('%Y%m%d', localtime), "\n";
     print "----------------------------------------------------\n";
 
@@ -215,4 +215,4 @@ sub runProgram {
 }
 
 # Run the main program function.
-runProgram();
+run_program();

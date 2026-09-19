@@ -1,15 +1,15 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # Structure check
 # Checks logs for "Structure needs cleaning" message, send email if found
 # By Nicholas Grogg
-# Revision: 20260119
+# Revision: 20260918
 
 # Set exit on error
 set -e
 
 ## Help function
-function helpFunction(){
+function help_function(){
     printf "%s\n" \
     "Help" \
     "----------------------------------------------------" \
@@ -21,11 +21,11 @@ function helpFunction(){
     "* Check system logs for Structure needs cleaning message" \
     "* If message found sends ticket to provided address" \
     "* Pass email address and recipient as argument" \
-    "Usage, ./structureCheck.sh check sender recipient"
+    "Usage, ./structure-check.sh check sender recipient"
 }
 
 ## Function to run program
-function runProgram(){
+function run_program(){
     printf "%s\n" \
     "Check" \
     "----------------------------------------------------"
@@ -79,14 +79,14 @@ case "$1" in
     printf "%s\n" \
     "Running Help function" \
     "----------------------------------------------------"
-    helpFunction
+    help_function
     exit
     ;;
 [Cc]heck)
     printf "%s\n" \
     "Running script" \
     "----------------------------------------------------"
-    runProgram $2 $3
+    run_program $2 $3
     ;;
 *)
     printf "%s\n" \
@@ -94,7 +94,7 @@ case "$1" in
     "----------------------------------------------------" \
     "Running help script and exiting." \
     "Re-run script with valid input"
-    helpFunction
+    help_function
     exit
     ;;
 esac

@@ -3,7 +3,10 @@
 # MariaDB Upgrader
 # BASH script for upgrading MariaDB
 # By Nicholas Grogg
-# Revision: 20260821
+# Revision: 20260918
+
+# Set exit on error
+set -e
 
 # Color variables
 ## Errors
@@ -16,7 +19,7 @@ yellow=$(tput setaf 3)
 normal=$(tput sgr0)
 
 # Help function
-function helpFunction(){
+function help_function(){
     printf "%s\n" \
     "Help" \
     "----------------------------------------------------" \
@@ -29,8 +32,8 @@ function helpFunction(){
     "* Designed for RPM/DEB based servers" \
     "* Takes target MariaDB version as argument" \
     " " \
-    "Usage. ./databaseTechUpgrader.sh upgrade TARGET_VERSION" \
-    "Ex. ./databaseTechUpgrader.sh upgrade 11.4" \
+    "Usage. ./mariadb-upgrader.sh upgrade TARGET_VERSION" \
+    "Ex. ./mariadb-upgrader.sh upgrade 11.4" \
     " " \
     "Script will alert if disk usage >75%" \
     "Will require manual confirmation to proceed" \
@@ -43,7 +46,7 @@ function helpFunction(){
 }
 
 # Function to run program
-function runProgram(){
+function run_program(){
     printf "%s\n" \
     "Upgrade" \
     "----------------------------------------------------" \
@@ -51,15 +54,15 @@ function runProgram(){
 
     ## Variables
     ### Current version of MariaDB installed
-    local techCurrentVersion="$(mariadb --version | awk '{print $5}' | cut -d'.' -f1-2)"
+    local mariadb_current_version="$(mariadb --version | awk '{print $5}' | cut -d'.' -f1-2)"
     ### Version of database tech to upgrade
-    local techTargetVersion="$1"
+    local mariadb_target_version="$1"
     ### Variable for date script is run
-    local runDate="$(date +%Y%m%d)"
+    local current_date="$(date +%Y%m%d)"
 
     ## Validation
-    ### Is techTargetVersion empty?
-    if [[ -z "$techTargetVersion" ]]; then
+    ### Is mariadb_target_version empty?
+    if [[ -z "$mariadb_target_version" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - MariaDB Target Version null!" \
         "----------------------------------------------------" \
@@ -67,7 +70,7 @@ function runProgram(){
         "Re-run script with valid input${normal}" \
         " "
 
-        helpFunction
+        help_function
         exit 1
     else
         printf "%s\n" \
@@ -111,10 +114,10 @@ function runProgram(){
     # gsub(), global substitution
     # "%","",$5, replace all % characters with nothing, only apply to field $5
     # print $5, print field 5
-    local diskUsage=$(df -P / | awk 'NR==2 {gsub("%","",$5); print $5}')
+    local disk_usage=$(df -P / | awk 'NR==2 {gsub("%","",$5); print $5}')
 
     #### Flag if usage over 75%
-    if [[ "$diskUsage" -gt 75 ]]; then
+    if [[ "$disk_usage" -gt 75 ]]; then
         printf "%s\n" \
         "${yellow}IMPORTANT: User Input Required" \
         "----------------------------------------------------" \
@@ -131,7 +134,7 @@ function runProgram(){
         "Press enter to proceed or control + c to cancel${normal}" \
         " "
 
-        read junkInput
+        read junk_input
     else
         printf "%s\n" \
         "${green}Disk Space usage under 75%" \
@@ -146,8 +149,8 @@ function runProgram(){
     "----------------------------------------------------" \
     "Value Confirmation " \
     "Hostname:                $(hostname)" \
-    "Current MariaDB version: $techCurrentVersion" \
-    "Target MariaDB version:  $techTargetVersion" \
+    "Current MariaDB version: $mariadb_current_version" \
+    "Target MariaDB version:  $mariadb_target_version" \
     " " \
     "Double check that values are correct." \
     "Double check that snapshots were taken." \
@@ -161,7 +164,7 @@ function runProgram(){
     "Press enter to proceed or control + c to cancel${normal}" \
     " "
 
-    read junkInput
+    read junk_input
 
     ## Upgrade
     printf "%s\n" \
@@ -175,22 +178,22 @@ function runProgram(){
     "----------------------------------------------------" \
     " "
 
-    mkdir mariadb.dumps.$techCurrentVersion.$techTargetVersion.$runDate
+    mkdir mariadb.dumps.$mariadb_current_version.$mariadb_target_version.$current_date
 
     ### Generate list of databases
     #### Password
     read -p "Enter MariaDB username: " $username
-    read -s -p "Enter MariaDB password: " $databasePass
+    read -s -p "Enter MariaDB password: " $database_pass
 
     #### Write list of databases, parse out MariaDB output and system databases
-    mariadb -u "$username" -p"$databasePass" -e "SHOW DATABASES;" | tail -n +2 | grep -v -E "_schema$|mysql|^sys$" > mariadb.databases.$techCurrentVersion.$techTargetVersion.$runDate.txt
+    mariadb -u "$username" -p"$database_pass" -e "SHOW DATABASES;" | tail -n +2 | grep -v -E "_schema$|mysql|^sys$" > mariadb.databases.$mariadb_current_version.$mariadb_target_version.$current_date.txt
 
     #### If word count of text file containing databases > 0, backup databases
-    if [[ $(wc -w mariadb.databases.$techCurrentVersion.$techTargetVersion.$runDate.txt | awk '{print $1}') -gt 0 ]]; then
+    if [[ $(wc -w mariadb.databases.$mariadb_current_version.$mariadb_target_version.$current_date.txt | awk '{print $1}') -gt 0 ]]; then
         ##### Dump + compress databases
-        for database in $(cat mariadb.databases.$techCurrentVersion.$techTargetVersion.$runDate.txt); do
-            mariadb-dump -u "$username" -p"$databasePass" $database > mariadb.dumps.$techCurrentVersion.$techTargetVersion.$runDate/$database.$runDate.sql
-            gzip mariadb.dumps.$techCurrentVersion.$techTargetVersion.$runDate/$database.$runDate.sql
+        for database in $(cat mariadb.databases.$mariadb_current_version.$mariadb_target_version.$current_date.txt); do
+            mariadb-dump -u "$username" -p"$database_pass" $database > mariadb.dumps.$mariadb_current_version.$mariadb_target_version.$current_date/$database.$current_date.sql
+            gzip mariadb.dumps.$mariadb_current_version.$mariadb_target_version.$current_date/$database.$current_date.sql
         done
 
     #### Else prompt user then continue
@@ -211,7 +214,7 @@ function runProgram(){
         "Press enter to proceed or control + c to cancel${normal}" \
         " "
 
-        read junkInput
+        read junk_input
     fi
 
     ### Back up database configs
@@ -220,19 +223,19 @@ function runProgram(){
     "----------------------------------------------------" \
     " "
 
-    mkdir mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate
+    mkdir mariadb.configs.$mariadb_current_version.$mariadb_target_version.$current_date
 
     #### Back up configs if they exist - expand as needed
     if [[ -d /etc/my.cnf.d ]]; then
-        cp -r /etc/my.cnf.d mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate
+        cp -r /etc/my.cnf.d mariadb.configs.$mariadb_current_version.$mariadb_target_version.$current_date
     fi
 
     if [[ -f /etc/my.cnf ]]; then
-        cp /etc/my.cnf mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate
+        cp /etc/my.cnf mariadb.configs.$mariadb_current_version.$mariadb_target_version.$current_date
     fi
 
     if [[ -d /etc/mysql/ ]]; then
-        cp -r /etc/mysql/ mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate
+        cp -r /etc/mysql/ mariadb.configs.$mariadb_current_version.$mariadb_target_version.$current_date
     fi
 
     #### Stop Database
@@ -273,7 +276,7 @@ function runProgram(){
     if [[ -f /usr/bin/dnf ]]; then
         if [[ $(rpm --query --all | grep -i -E "mariadb|galera") ]]; then
             ##### Log packages
-            rpm --query --all | grep -i -E "mariadb|galera" >> galeraCheck.$techCurrentVersion.$techTargetVersion.$runDate.txt
+            rpm --query --all | grep -i -E "mariadb|galera" >> galera_check.$mariadb_current_version.$mariadb_target_version.$current_date.txt
             for package in $(rpm --query --all | grep -i -E "mariadb|galera"); do
                 dnf remove $package -y
             done
@@ -283,7 +286,7 @@ function runProgram(){
     elif [[ -f /usr/bin/apt ]]; then
         if [[ $(apt list --installed | grep -i -E "^mariadb|galera") ]]; then
             ##### Log packages
-            apt list --installed | grep -i -E "^mariadb|galera" | cut -d'/' -f1 >> galeraCheck.$techCurrentVersion.$techTargetVersion.$runDate.txt
+            apt list --installed | grep -i -E "^mariadb|galera" | cut -d'/' -f1 >> galera_check.$mariadb_current_version.$mariadb_target_version.$current_date.txt
             for package in $(apt list --installed | grep -i -E "^mariadb|galera"| cut -d'/' -f1); do
                 apt remove $package -y
             done
@@ -311,7 +314,7 @@ function runProgram(){
         dnf install wget -y
         wget https://r.mariadb.com/downloads/mariadb_repo_setup
         chmod +x mariadb_repo_setup
-        bash mariadb_repo_setup --mariadb-server-version="mariadb-$techTargetVersion"
+        bash mariadb_repo_setup --mariadb-server-version="mariadb-$mariadb_target_version"
         dnf config-manager --disable mariadb-maxscale
         dnf install MariaDB-server MariaDB-backup -y
 
@@ -320,7 +323,7 @@ function runProgram(){
         apt install wget -y
         wget https://r.mariadb.com/downloads/mariadb_repo_setup
         chmod +x mariadb_repo_setup
-        bash mariadb_repo_setup --mariadb-server-version="mariadb-$techTargetVersion"
+        bash mariadb_repo_setup --mariadb-server-version="mariadb-$mariadb_target_version"
         apt update
         apt install mariadb-server mariadb-backup -y
 
@@ -350,7 +353,7 @@ function runProgram(){
     "----------------------------------------------------" \
     " "
 
-    mariadb-upgrade -u "$username" -p"$databasePass"
+    mariadb-upgrade -u "$username" -p"$database_pass"
 
     printf "%s\n" \
     "Reinstalling MariaDB dependencies" \
@@ -358,15 +361,15 @@ function runProgram(){
     " "
 
     ### Reinstall fringe packages if file exists
-    if [[ -f galeraCheck.$techCurrentVersion.$techTargetVersion.$runDate.txt ]]; then
+    if [[ -f galera_check.$mariadb_current_version.$mariadb_target_version.$current_date.txt ]]; then
         #### If dnf
         if [[ -f /usr/bin/dnf ]]; then
-            for package in $(cat galeraCheck.$techCurrentVersion.$techTargetVersion.$runDate.txt); do
+            for package in $(cat galera_check.$mariadb_current_version.$mariadb_target_version.$current_date.txt); do
                 dnf install -y $package
             done
         #### Else If Apt
         elif [[ -f /usr/bin/apt ]]; then
-            for package in $(cat galeraCheck.$techCurrentVersion.$techTargetVersion.$runDate.txt); do
+            for package in $(cat galera_check.$mariadb_current_version.$mariadb_target_version.$current_date.txt); do
                 apt install -y $package
             done
         #### Else fail
@@ -394,7 +397,7 @@ function runProgram(){
         " "
 
         #### Diff files, flag if different
-        if [[ $(diff /etc/my.cnf mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate/my.cnf) ]]; then
+        if [[ $(diff /etc/my.cnf mariadb.configs.$mariadb_current_version.$mariadb_target_version.$current_date/my.cnf) ]]; then
             printf "%s\n" \
             "${yellow}IMPORTANT: User Input Required" \
             "----------------------------------------------------" \
@@ -408,11 +411,11 @@ function runProgram(){
             " " \
             "Config filepath: /etc/my.cnf" \
             " " \
-            "Backup filepath: mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate/my.cnf" \
+            "Backup filepath: mariadb.configs.$mariadb_current_version.$mariadb_target_version.$current_date/my.cnf" \
             "Differences: ${normal}" \
             " "
 
-            diff /etc/my.cnf mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate/my.cnf
+            diff /etc/my.cnf mariadb.configs.$mariadb_current_version.$mariadb_target_version.$current_date/my.cnf
 
             printf "%s\n" \
             " " \
@@ -422,7 +425,7 @@ function runProgram(){
             "Press enter to proceed or control + c to cancel${normal}" \
             " "
 
-            read junkInput
+            read junk_input
         else
             printf "%s\n" \
             "${green}No differences found" \
@@ -439,10 +442,10 @@ function runProgram(){
         "----------------------------------------------------" \
         " "
         #### For loop to check files
-        for file in $(ls mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate/my.cnf.d/); do
+        for file in $(ls mariadb.configs.$mariadb_current_version.$mariadb_target_version.$current_date/my.cnf.d/); do
 
             ##### Diff new vs backed up files, flag if different
-            if [[ $(diff /etc/my.cnf.d/$file mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate/my.cnf.d/$file) ]]; then
+            if [[ $(diff /etc/my.cnf.d/$file mariadb.configs.$mariadb_current_version.$mariadb_target_version.$current_date/my.cnf.d/$file) ]]; then
                 printf "%s\n" \
                 "${yellow}IMPORTANT: User Input Required" \
                 "----------------------------------------------------" \
@@ -456,11 +459,11 @@ function runProgram(){
                 " " \
                 "Config filepath: /etc/my.cnf.d/$file" \
                 " " \
-                "Backup filepath: mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate/my.cnf.d/$file" \
+                "Backup filepath: mariadb.configs.$mariadb_current_version.$mariadb_target_version.$current_date/my.cnf.d/$file" \
                 "Differences: ${normal}" \
                 " "
 
-                diff /etc/my.cnf.d/$file mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate/my.cnf.d/$file
+                diff /etc/my.cnf.d/$file mariadb.configs.$mariadb_current_version.$mariadb_target_version.$current_date/my.cnf.d/$file
 
                 printf "%s\n" \
                 " " \
@@ -470,7 +473,7 @@ function runProgram(){
                 "Press enter to proceed or control + c to cancel${normal}" \
                 " "
 
-                read junkInput
+                read junk_input
             else
                 printf "%s\n" \
                 "${green}No differences found" \
@@ -490,10 +493,10 @@ function runProgram(){
         "----------------------------------------------------" \
         " "
         #### For loop to check files
-        for file in $(find mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate/mysql/ -type f -printf "%P\n"); do
+        for file in $(find mariadb.configs.$mariadb_current_version.$mariadb_target_version.$current_date/mysql/ -type f -printf "%P\n"); do
 
             ##### Diff new vs backed up files, flag if different
-            if [[ $(diff /etc/mysql/$file mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate/mysql/$file) ]]; then
+            if [[ $(diff /etc/mysql/$file mariadb.configs.$mariadb_current_version.$mariadb_target_version.$current_date/mysql/$file) ]]; then
                 printf "%s\n" \
                 "${yellow}IMPORTANT: User Input Required" \
                 "----------------------------------------------------" \
@@ -507,12 +510,12 @@ function runProgram(){
                 " " \
                 "Current config filepath: /etc/mysql/$file" \
                 " " \
-                "Backup config filepath: mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate/mysql/$file" \
+                "Backup config filepath: mariadb.configs.$mariadb_current_version.$mariadb_target_version.$current_date/mysql/$file" \
                 " " \
                 "Differences: ${normal}" \
                 " "
 
-                diff /etc/mysql/$file mariadb.configs.$techCurrentVersion.$techTargetVersion.$runDate/mysql/$file
+                diff /etc/mysql/$file mariadb.configs.$mariadb_current_version.$mariadb_target_version.$current_date/mysql/$file
 
                 printf "%s\n" \
                 " " \
@@ -522,7 +525,7 @@ function runProgram(){
                 "Press enter to proceed or control + c to cancel${normal}" \
                 " "
 
-                read junkInput
+                read junk_input
             else
                 printf "%s\n" \
                 "${green}No differences found" \
@@ -566,7 +569,7 @@ case "$1" in
     "----------------------------------------------------" \
     " "
 
-    helpFunction
+    help_function
     exit
     ;;
 [Uu]pgrade)
@@ -575,7 +578,7 @@ case "$1" in
     "----------------------------------------------------" \
     " "
 
-    runProgram "$2"
+    run_program "$2"
     ;;
 *)
     printf "%s\n" \
@@ -585,7 +588,7 @@ case "$1" in
     "Re-run script with valid input${normal}" \
     " "
 
-    helpFunction
+    help_function
     exit
     ;;
 esac

@@ -1,9 +1,9 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # Disk Pinger
 # Checks for low disk space, sends email if found
 # By Nicholas Grogg
-# Revision: 20260422
+# Revision: 20260918
 
 # Set exit on error
 set -e
@@ -19,7 +19,7 @@ yellow=$(tput setaf 3)
 normal=$(tput sgr0)
 
 # Help function
-function helpFunction(){
+function help_function(){
 	printf "%s\n" \
 	"Help" \
 	"----------------------------------------------------" \
@@ -31,12 +31,12 @@ function helpFunction(){
 	"* Check available disk space and open a ticket " \
 	"* Takes a filepath, email, percentage over as arguments" \
     "* Also checks inodes" \
-	"Usage. ./diskPinger.sh check FILEPATH EMAIL THRESHOLD%" \
-	"Ex. ./diskPinger.sh check / jdoe@email.com 90"
+	"Usage. ./disk-pinger.sh check FILEPATH EMAIL THRESHOLD%" \
+	"Ex. ./disk-pinger.sh check / jdoe@email.com 90"
 }
 
 # Function to run program
-function runProgram(){
+function run_program(){
 	printf "%s\n" \
 	"Check" \
 	"----------------------------------------------------"
@@ -49,19 +49,19 @@ function runProgram(){
         "----------------------------------------------------" \
         "Please enter a value below.${normal}"
 
-        #### While loop to read in filePath
-        while [[ -z $filePath ]]; do
+        #### While loop to read in file_path
+        while [[ -z $file_path ]]; do
             printf "%s\n" \
             "${yellow}IMPORTANT: Enter a value for the filepath" \
             "----------------------------------------------------" \
             "Example filespaths: '/', '/mnt' " \
             " "
 
-            read filePath
+            read file_path
         done
     else
-        #### Else set filePath to $1
-        filePath=$1
+        #### Else set file_path to $1
+        local file_path=$1
 
         printf "%s\n" \
         "${green}Filepath set" \
@@ -89,7 +89,7 @@ function runProgram(){
         done
     else
         #### Else set email to $2
-        email=$2
+        local email=$2
 
         printf "%s\n" \
         "${green}Email set" \
@@ -117,7 +117,7 @@ function runProgram(){
         done
     else
         #### Else set threshold to $3
-        threshold=$3
+        local threshold=$3
 
         printf "%s\n" \
         "${green}Threshold set" \
@@ -132,31 +132,31 @@ function runProgram(){
     " "
 
     ### Get available disk space
-    availableSpace=$(df "$filePath" -h | awk 'NR==2 {print $5}' | rev | cut -c2- | rev)
+    available_space=$(df "$file_path" -h | awk 'NR==2 {print $5}' | rev | cut -c2- | rev)
 
     ### Get available disk inodes
-    availableInodes=$(df "$filePath" -i | awk 'NR==2 {print $5}' | rev | cut -c2- | rev)
+    available_inodes=$(df "$file_path" -i | awk 'NR==2 {print $5}' | rev | cut -c2- | rev)
 
     ### Check vs threshold, if percentage over threshold send email
-    if [[ $(bc <<< "$availableSpace > $threshold") == "1" || $(bc <<< "$availableInodes > $threshold") == "1" ]]; then
+    if [[ $(bc <<< "$available_space > $threshold") == "1" || $(bc <<< "$available_inodes > $threshold") == "1" ]]; then
         #### Get list of files using disk space or inodes, write output to file
-        cd $filePath
+        cd $file_path
 
         ##### Low disk and inodes
-        if [[ $(bc <<< "$availableSpace > $threshold") == "1" && $(bc <<< "$availableInodes > $threshold") == "1" ]]; then
-            echo "Disk Space usage" >> /root/diskPingerOutput.txt
-            du --max-depth=5 -chax  2>&1 | grep '[0-9\.]\+G' | sort -hr | head -n 10 >> /root/diskPingerOutput.txt
-            echo "" >> /root/diskPingerOutput.txt
-            echo "Disk Inode usage" >> /root/diskPingerOutput.txt
-            find . -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -n | tail -20 >> /root/diskPingerOutput.txt
+        if [[ $(bc <<< "$available_space > $threshold") == "1" && $(bc <<< "$available_inodes > $threshold") == "1" ]]; then
+            echo "Disk Space usage" >> /root/disk-pinger-output.txt
+            du --max-depth=5 -chax  2>&1 | grep '[0-9\.]\+G' | sort -hr | head -n 10 >> /root/disk-pinger-output.txt
+            echo "" >> /root/disk-pinger-output.txt
+            echo "Disk Inode usage" >> /root/disk-pinger-output.txt
+            find . -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -n | tail -20 >> /root/disk-pinger-output.txt
         ##### Low Disk Space only
-        elif [[ $(bc <<< "$availableSpace > $threshold") == "1" && $(bc <<< "$availableInodes > $threshold") == "0" ]]; then
-            echo "Disk Space usage" >> /root/diskPingerOutput.txt
-            du --max-depth=5 -chax  2>&1 | grep '[0-9\.]\+G' | sort -hr | head -n 10 >> /root/diskPingerOutput.txt
+        elif [[ $(bc <<< "$available_space > $threshold") == "1" && $(bc <<< "$available_inodes > $threshold") == "0" ]]; then
+            echo "Disk Space usage" >> /root/disk-pinger-output.txt
+            du --max-depth=5 -chax  2>&1 | grep '[0-9\.]\+G' | sort -hr | head -n 10 >> /root/disk-pinger-output.txt
         ##### Low Disk Inodes only
-        elif [[ $(bc <<< "$availableSpace > $threshold") == "0" && $(bc <<< "$availableInodes > $threshold") == "1" ]]; then
-            echo "Disk Inode usage" >> /root/diskPingerOutput.txt
-            find . -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -n | tail -20 >> /root/diskPingerOutput.txt
+        elif [[ $(bc <<< "$available_space > $threshold") == "0" && $(bc <<< "$available_inodes > $threshold") == "1" ]]; then
+            echo "Disk Inode usage" >> /root/disk-pinger-output.txt
+            find . -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -n | tail -20 >> /root/disk-pinger-output.txt
         ##### Fail state, shouldn't be reachable
         else
             echo "This shouldn't be reachable..."
@@ -164,11 +164,11 @@ function runProgram(){
         fi
 
         #### Check if file exists, useful on initial runs
-        if [[ -e /root/scripts/diskPingerEmailSent.txt ]]; then
+        if [[ -e /root/scripts/disk-pinger-email-sent.txt ]]; then
             ##### Has an email been sent in the last two weeks? If not send one
-            if [[ $(find /root/scripts/diskPingerEmailSent.txt -mtime +14) ]]; then
+            if [[ $(find /root/scripts/disk-pinger-email-sent.txt -mtime +14) ]]; then
                 ###### Remove old file
-                rm /root/scripts/diskPingerEmailSent.txt
+                rm /root/scripts/disk-pinger-email-sent.txt
 
             ##### Else exit so inboxes aren't spammed
             else
@@ -178,13 +178,13 @@ function runProgram(){
 
         #### Send email
         #TODO: Add sending agent before deploying
-        cat /root/diskPingerOutput.txt | mail -s "Low Disk Space on $(hostname)" -r "SENDER" $email
+        cat /root/disk-pinger-output.txt | mail -s "Low Disk Space on $(hostname)" -r "SENDER" $email
 
         #### Make file stating email was sent
-        echo "$(date)" >> /root/diskPingerEmailSent.txt
+        echo "$(date)" >> /root/disk-pinger-email-sent.txt
 
         #### Clean up output file
-        rm /root/diskPingerOutput.txt
+        rm /root/disk-pinger-output.txt
     fi
 }
 
@@ -202,14 +202,14 @@ case "$1" in
 	printf "%s\n" \
 	"Running Help function" \
 	"----------------------------------------------------"
-	helpFunction
+	help_function
 	exit
 	;;
 [Cc]heck)
 	printf "%s\n" \
 	"Running script" \
 	"----------------------------------------------------"
-	runProgram $2 $3 $4
+	run_program $2 $3 $4
 	;;
 *)
 	printf "%s\n" \
@@ -217,7 +217,7 @@ case "$1" in
 	"----------------------------------------------------" \
 	"Running help script and exiting." \
 	"Re-run script with valid input${normal}"
-	helpFunction
+	help_function
 	exit
 	;;
 esac

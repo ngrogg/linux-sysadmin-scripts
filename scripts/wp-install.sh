@@ -3,7 +3,7 @@
 # WordPress Install
 # BASH script to install WordPress
 # By Nicholas Grogg
-# Revision: 20260821
+# Revision: 20260918
 
 # Set exit on error
 set -e
@@ -15,7 +15,7 @@ yellow=$(tput setaf 3)
 normal=$(tput sgr0)
 
 # Help function
-function helpFunction(){
+function help_function(){
     printf "%s\n" \
     "Help" \
     "----------------------------------------------------" \
@@ -26,15 +26,15 @@ function helpFunction(){
     "* Install WordPress site on web server" \
     "* Takes a site docroot as an argument " \
     "* IMPORTANT: Does NOT create apache vhost! " \
-    "Usage. ./wpInstall.sh web docroot" \
-    "Ex. ./wpInstall.sh web /var/www/site.com" \
+    "Usage. ./wp-install.sh web docroot" \
+    "Ex. ./wp-install.sh web /var/www/site.com" \
     " " \
     "database/Database" \
     "* Create Database and Database user on database server" \
     "* Takes Web IP, Database name and database user as arguments" \
     "* For local databases use localhost for the IP" \
-    "Usage. ./wpInstall.sh database webIP databaseName databaseUser" \
-    "Ex. ./wpInstall.sh database 10.10.0.1 site_com site_user"
+    "Usage. ./wp-install.sh database web_ip database_name database_user" \
+    "Ex. ./wp-install.sh database 10.10.0.1 site_com site_user"
 }
 
 # Function to install WordPress on Web
@@ -50,9 +50,9 @@ function web(){
     ### Is server DEB or RPM based?
     ### Check if using apt (DEB) or dnf (RPM), set syslog based on output
     if [[ -e /usr/bin/dnf ]]; then
-        local packageManager="RPM"
+        local package_manager="RPM"
     elif [[ -e /usr/bin/apt ]]; then
-        local packageManager="DEB"
+        local package_manager="DEB"
     else
         #### This message shouldn't be reachable with our configs and may suggest a more serious issue
         printf "%s\n" \
@@ -91,7 +91,7 @@ function web(){
         "Running help function and exiting!${normal}" \
         " "
 
-        helpFunction
+        help_function
         exit 1
     else
         printf "%s\n" \
@@ -116,7 +116,7 @@ function web(){
                 "Running help function and exiting!${normal}" \
                 " "
 
-                helpFunction
+                help_function
                 exit 1
             else
                 printf "%s\n" \
@@ -136,7 +136,7 @@ function web(){
     " " \
     "If all clear, press enter to proceed or ctrl-c to cancel${normal}" \
     " "
-    read junkInput
+    read junk_input
 
     ### Check for PHP, install if missing
     printf "%s\n" \
@@ -147,9 +147,9 @@ function web(){
     #### Package lists based on https://make.wordpress.org/hosting/handbook/server-environment/
     #### Non existing packages on DEB/RPM installs skipped
     if [[ ! -f /usr/bin/php ]]; then
-        if [[ "$packageManager" == "RPM" ]]; then
+        if [[ "$package_manager" == "RPM" ]]; then
                 yum install -y php php-cli php-common php-fpm php-intl php-mbstring php-mysqlnd php-opcache php-pdo php-sodium php-xml
-        elif [[ "$packageManager" == "DEB" ]]; then
+        elif [[ "$package_manager" == "DEB" ]]; then
                 apt install -y libapache2-mod-php php php-cli php-common php-fpm php-gd php-igbinary php-intl php-json php-mbstring php-mysql php-xml php-zip
         else
             ##### Package Manager error if non-apt/dnf server
@@ -175,9 +175,9 @@ function web(){
     " "
 
     if [[ ! $(php -m | grep mysql) ]]; then
-        if [[ "$packageManager" == "RPM" ]]; then
+        if [[ "$package_manager" == "RPM" ]]; then
                 sudo dnf install php-mysqlnd -y
-        elif [[ "$packageManager" == "DEB" ]]; then
+        elif [[ "$package_manager" == "DEB" ]]; then
                 sudo apt install php-mysql -y
         else
             ##### Package Manager error if non-apt/dnf server
@@ -202,9 +202,9 @@ function web(){
     " "
 
     if [[ ! $(php -m | grep json) ]]; then
-        if [[ "$packageManager" == "RPM" ]]; then
+        if [[ "$package_manager" == "RPM" ]]; then
                 sudo dnf install php-json -y
-        elif [[ "$packageManager" == "DEB" ]]; then
+        elif [[ "$package_manager" == "DEB" ]]; then
                 sudo apt install php-json -y
         else
             ##### Package Manager error if non-apt/dnf server
@@ -229,9 +229,9 @@ function web(){
     " "
 
     if [[ ! $(php -m | grep gd) ]]; then
-        if [[ "$packageManager" == "RPM" ]]; then
+        if [[ "$package_manager" == "RPM" ]]; then
                 sudo dnf install php-gd -y
-        elif [[ "$packageManager" == "DEB" ]]; then
+        elif [[ "$package_manager" == "DEB" ]]; then
                 sudo apt install php-gd -y
         else
             ##### Package Manager error if non-apt/dnf server
@@ -272,7 +272,7 @@ function web(){
 
     ### Loosen permissions
     chmod 775 $(pwd) -R
-    if [[ "$packageManager" == "RPM" ]]; then
+    if [[ "$package_manager" == "RPM" ]]; then
         chown apache $(pwd) -R
     else
         chown www-data $(pwd) -R
@@ -294,9 +294,9 @@ function database(){
     "----------------------------------------------------"
 
     ## Variables
-    local webIP="$1"
-    local databaseName="$2"
-    local databaseUser="$3"
+    local web_ip="$1"
+    local database_name="$2"
+    local database_user="$3"
 
     ## Validation
     ### Is script running as root?
@@ -319,7 +319,7 @@ function database(){
     fi
 
     ### Check if web IP was passed
-    if [[ -z "$webIP" ]]; then
+    if [[ -z "$web_ip" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - A Web IP wasn't passed!"  \
         "----------------------------------------------------" \
@@ -327,12 +327,12 @@ function database(){
         "Running help function and exiting!${normal}" \
         " "
 
-        helpFunction
+        help_function
         exit 1
     fi
 
     ### Check if database name was passed
-    if [[ -z "$databaseName" ]]; then
+    if [[ -z "$database_name" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - A Database Name wasn't passed!"  \
         "----------------------------------------------------" \
@@ -340,12 +340,12 @@ function database(){
         "Running help function and exiting!${normal}" \
         " "
 
-        helpFunction
+        help_function
         exit 1
     fi
 
     ### Check if database user was passed
-    if [[ -z "$databaseUser" ]]; then
+    if [[ -z "$database_user" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - A Database User wasn't passed!"  \
         "----------------------------------------------------" \
@@ -353,7 +353,7 @@ function database(){
         "Running help function and exiting!${normal}" \
         " "
 
-        helpFunction
+        help_function
         exit 1
     fi
 
@@ -361,20 +361,20 @@ function database(){
     printf "%s\n" \
     "${yellow}IMPORTANT: Value Confirmation" \
     "----------------------------------------------------" \
-    "Web IP:        $webIP" \
-    "Database Name: $databaseName" \
-    "Database User: $databaseUser" \
+    "Web IP:        $web_ip" \
+    "Database Name: $database_name" \
+    "Database User: $database_user" \
     " " \
     "If all clear, press enter to proceed or ctrl-c to cancel${normal}" \
     " "
-    read junkInput
+    read junk_input
 
     ## MySQL password
-    read -s -p "MySQL Password: " databasePass
+    read -s -p "MySQL Password: " database_pass
 
     ## Does Database exist?
     ### Run query
-    local databaseCheckQuery=$(mysql -u root -p"$databasePass" -e "SHOW DATABASES LIKE \"$databaseName\"")
+    local databaseCheckQuery=$(mysql -u root -p"$database_pass" -e "SHOW DATABASES LIKE \"$database_name\"")
 
     ### Check if checkQuery null or not, exit if so
     if [[ $databaseCheckQuery ]]; then
@@ -395,10 +395,10 @@ function database(){
 
     ## Does Database User exist?
     ### Run query
-    local userCheckQuery=$(mysql -u root -p"$databasePass" -e "SELECT user,host FROM mysql.user WHERE user like \"$databaseUser\" AND host like \"$welshIP\"")
+    local user_check_query=$(mysql -u root -p"$database_pass" -e "SELECT user,host FROM mysql.user WHERE user like \"$database_user\" AND host like \"$welshIP\"")
 
     ### Check if checkQuery null or not, exit if so
-    if [[ $userCheckQuery ]]; then
+    if [[ $user_check_query ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - User already exists!"  \
         "----------------------------------------------------" \
@@ -415,28 +415,28 @@ function database(){
 
     ## Create user/database and grant permissions
     ### Create WordPress Database
-    mysql -u root -p"$databasePass" -e "CREATE DATABASE $databaseName"
+    mysql -u root -p"$database_pass" -e "CREATE DATABASE $database_name"
 
     ### Create WordPress User
     #### Generate a random password and store it
-    userPass=$(date +%s | sha256sum | base64 | head -c 30)
-    userPass+=$(((RANDOM%1000+1)))
-    userPass+="!"
+    user_pass=$(date +%s | sha256sum | base64 | head -c 30)
+    user_pass+=$(((RANDOM%1000+1)))
+    user_pass+="!"
 
     #### Create user
-    mysql -u root -p"$databasePass" -e "CREATE USER $databaseUser@$webIP IDENTIFIED BY \"$userPass\""
+    mysql -u root -p"$database_pass" -e "CREATE USER $database_user@$web_ip IDENTIFIED BY \"$user_pass\""
 
     ### Grant user permissions
-    mysql -u root -p"$databasePass" -e "GRANT ALL ON $databaseName.* TO $databaseUser@$webIP"
+    mysql -u root -p"$database_pass" -e "GRANT ALL ON $database_name.* TO $database_user@$web_ip"
 
     ### Flush Privileges
-    mysql -u root -p"$databasePass" -e "FLUSH PRIVILEGES"
+    mysql -u root -p"$database_pass" -e "FLUSH PRIVILEGES"
 
     ### Write output to text file, append in case script is run multiple times
     echo "$(date)"
-    echo "Database Name: $databaseName"
-    echo "Username: $databaseUser"
-    echo "Password: $userPass"
+    echo "Database Name: $database_name"
+    echo "Username: $database_user"
+    echo "Password: $user_pass"
     echo "Database Host: $(hostname -I)"
 
     ## Prompt user on next steps
@@ -451,7 +451,6 @@ function database(){
     " " \
     "Use values listed above for install prompts.${normal}" \
     " "
-
 }
 
 # Main, read passed flags
@@ -468,7 +467,7 @@ case "$1" in
     printf "%s\n" \
     "Running Help function" \
     "----------------------------------------------------"
-    helpFunction
+    help_function
     exit
     ;;
 [Ww]eb)
@@ -489,7 +488,7 @@ case "$1" in
     "----------------------------------------------------" \
     "Running help script and exiting." \
     "Re-run script with valid input"
-    helpFunction
+    help_function
     exit
     ;;
 esac

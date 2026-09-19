@@ -3,7 +3,7 @@
 # A BASH script to update WordPress
 # Takes a filepath as an argument
 # By Nicholas Grogg
-# Revision: 20260821
+# Revision: 20260918
 
 # Set exit on error
 set -e
@@ -19,7 +19,7 @@ yellow=$(tput setaf 3)
 normal=$(tput sgr0)
 
 # Help function
-function helpFunction(){
+function help_function(){
     printf "%s\n" \
     "Help" \
     "----------------------------------------------------" \
@@ -33,7 +33,7 @@ function helpFunction(){
     "Should only be run after guided update function" \
     "Can be run as root or with root perms" \
     " " \
-    "Usage. ./wpUpdate.sh auto" \
+    "Usage. ./wp-update.sh auto" \
     " " \
     "update/Update" \
     "* Update site with wp cli" \
@@ -41,12 +41,12 @@ function helpFunction(){
     "* Installs wp-cli if not found" \
     "* Can run as root or non-root" \
     " " \
-    "Usage. ./wpUpdate.sh update /path/to/docroot" \
-    "Ex. ./wpUpdate.sh update /var/www/html"
+    "Usage. ./wp-update.sh update /path/to/docroot" \
+    "Ex. ./wp-update.sh update /var/www/html"
 }
 
 # Function to update ALL WordPress sites at /var/www
-function autoUpdate(){
+function auto_update(){
     ## If wp-cli doesn't exist install it
     if [[ ! -f "/usr/local/bin/wp" ]]; then
         ### Download wp-cli
@@ -66,41 +66,41 @@ function autoUpdate(){
     ## If run as root
     if [[ "$EUID" -eq 0 ]]; then
         ### While loop to find and update WordPress sites
-        while IFS= read -r -d '' filePath; do
+        while IFS= read -r -d '' file_path; do
             #### Set docroot, update site w/ wp-cli
-            /usr/local/bin/wp plugin update --allow-root --all --path="$filePath"
-            /usr/local/bin/wp theme update --allow-root --all --skip-plugins --path="$filePath"
-            /usr/local/bin/wp core update --allow-root --skip-plugins --path="$filePath"
-            /usr/local/bin/wp core update-db --allow-root --path="$filePath"
+            /usr/local/bin/wp plugin update --allow-root --all --path="$file_path"
+            /usr/local/bin/wp theme update --allow-root --all --skip-plugins --path="$file_path"
+            /usr/local/bin/wp core update --allow-root --skip-plugins --path="$file_path"
+            /usr/local/bin/wp core update-db --allow-root --path="$file_path"
         done < <(find /var/www -maxdepth 4 -type f -name "wp-settings.php" -printf '%h\0')
     else
         ### While loop to find and update WordPress sites
-        while IFS= read -r -d '' filePath; do
+        while IFS= read -r -d '' file_path; do
             #### Set docroot, update site w/ wp-cli
-            /usr/local/bin/wp plugin update --all --path="$filePath"
-            /usr/local/bin/wp theme update --all --skip-plugins --path="$filePath"
-            /usr/local/bin/wp core update --skip-plugins --path="$filePath"
-            /usr/local/bin/wp core update-db --path="$filePath"
+            /usr/local/bin/wp plugin update --all --path="$file_path"
+            /usr/local/bin/wp theme update --all --skip-plugins --path="$file_path"
+            /usr/local/bin/wp core update --skip-plugins --path="$file_path"
+            /usr/local/bin/wp core update-db --path="$file_path"
         done < <(find /var/www -maxdepth 4 -type f -name "wp-settings.php" -printf '%h\0')
     fi
 
 }
 
 # Function to run program
-function runProgram(){
+function run_program(){
     printf "%s\n" \
     "Update" \
     "----------------------------------------------------"
 
     ## Variables
     ### Filepath to Docroot
-    local filePath="$1"
+    local file_path="$1"
     ### Bool for root, default value of false
-    local rootCheck=0
+    local root_check=0
 
     ## Checks
-    ### Check if filePath passed
-    if [[ -z $filePath ]]; then
+    ### Check if file_path passed
+    if [[ -z $file_path ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - FILEPATH NULL" \
         "----------------------------------------------------" \
@@ -108,18 +108,18 @@ function runProgram(){
         "Ex. /var/www/html ${normal}" \
         " "
 
-        read filePath
+        read file_path
     fi
 
     ### Fail state for filepath
-    if [[ -z $filePath ]]; then
+    if [[ -z $file_path ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - FILEPATH NULL" \
         "----------------------------------------------------" \
         "Filepath still null!" \
         "Running help function and exiting"
 
-        helpFunction
+        help_function
 
         exit 1
     fi
@@ -136,8 +136,8 @@ function runProgram(){
         "Proceeding${normal}" \
         " "
 
-        #### Set rootCheck to true
-        rootCheck=1
+        #### Set root_check to true
+        root_check=1
     else
         "${green}User is not root "\
         "----------------------------------------------------" \
@@ -150,14 +150,14 @@ function runProgram(){
     "${yellow}IMPORTANT: Value Confirmation" \
     "----------------------------------------------------" \
     "Hostname:          $(hostname)" \
-    "Docroot to update: $filePath" \
+    "Docroot to update: $file_path" \
     " " \
     "Double check that values are correct." \
     "Double check that snapshots were taken." \
     " " \
     "Press enter to proceed or control + c to cancel${normal}"
 
-    read junkInput
+    read junk_input
 
     ## Check if wp-cli installed
     printf "%s\n" \
@@ -196,10 +196,10 @@ function runProgram(){
     "Plugin Checksums" \
     "----------------------------------------------------"
 
-    if [[ $rootCheck -eq 1 ]]; then
-        wp plugin verify-checksums --all --path=$filePath --allow-root
+    if [[ $root_check -eq 1 ]]; then
+        wp plugin verify-checksums --all --path=$file_path --allow-root
     else
-        wp plugin verify-checksums --all --path=$filePath
+        wp plugin verify-checksums --all --path=$file_path
     fi
 
     printf "%s\n" \
@@ -212,7 +212,7 @@ function runProgram(){
     " " \
     "Press enter to proceed or control + c to cancel${normal}"
 
-    read junkInput
+    read junk_input
 
     ### Themes - add once wp cli supports this
     #printf "%s\n" \
@@ -224,10 +224,10 @@ function runProgram(){
     "Core Checksums" \
     "----------------------------------------------------"
 
-    if [[ $rootCheck -eq 1 ]]; then
-        wp core verify-checksums --include-root --path=$filePath --allow-root
+    if [[ $root_check -eq 1 ]]; then
+        wp core verify-checksums --include-root --path=$file_path --allow-root
     else
-        wp core verify-checksums --include-root --path=$filePath
+        wp core verify-checksums --include-root --path=$file_path
     fi
 
 
@@ -241,7 +241,7 @@ function runProgram(){
     " " \
     "Press enter to proceed or control + c to cancel${normal}"
 
-    read junkInput
+    read junk_input
 
     ## Update site
     printf "%s\n" \
@@ -253,10 +253,10 @@ function runProgram(){
     "Updating Plugins" \
     "----------------------------------------------------"
 
-    if [[ $rootCheck -eq 1 ]]; then
-        /usr/bin/wp plugin update --all --path=$filePath --allow-root
+    if [[ $root_check -eq 1 ]]; then
+        /usr/bin/wp plugin update --all --path=$file_path --allow-root
     else
-        /usr/bin/wp plugin update --all --path=$filePath
+        /usr/bin/wp plugin update --all --path=$file_path
     fi
 
     ### Update site themes
@@ -264,10 +264,10 @@ function runProgram(){
     "Updating Themes" \
     "----------------------------------------------------"
 
-    if [[ $rootCheck -eq 1 ]]; then
-        /usr/bin/wp theme update --all --skip-plugins --path=$filePath --allow-root
+    if [[ $root_check -eq 1 ]]; then
+        /usr/bin/wp theme update --all --skip-plugins --path=$file_path --allow-root
     else
-        /usr/bin/wp theme update --all --skip-plugins --path=$filePath
+        /usr/bin/wp theme update --all --skip-plugins --path=$file_path
     fi
 
     ## Update site core
@@ -275,10 +275,10 @@ function runProgram(){
     "Updating WP Core" \
     "----------------------------------------------------"
 
-    if [[ $rootCheck -eq 1 ]]; then
-        /usr/bin/wp core update --skip-plugins --path=$filePath --allow-root
+    if [[ $root_check -eq 1 ]]; then
+        /usr/bin/wp core update --skip-plugins --path=$file_path --allow-root
     else
-        /usr/bin/wp core update --skip-plugins --path=$filePath
+        /usr/bin/wp core update --skip-plugins --path=$file_path
     fi
 }
 
@@ -296,18 +296,18 @@ case "$1" in
     printf "%s\n" \
     "Running Help function" \
     "----------------------------------------------------"
-    helpFunction
+    help_function
     exit
     ;;
 [Aa]uto)
-    autoUpdate
+    auto_update
     ;;
 
 [Uu]pdate)
     printf "%s\n" \
     "Running script" \
     "----------------------------------------------------"
-    runProgram "$2"
+    run_program "$2"
     ;;
 *)
     printf "%s\n" \
@@ -315,7 +315,7 @@ case "$1" in
     "----------------------------------------------------" \
     "Running help script and exiting." \
     "Re-run script with valid input${normal}"
-    helpFunction
+    help_function
     exit
     ;;
 esac

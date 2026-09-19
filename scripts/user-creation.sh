@@ -3,7 +3,7 @@
 # User Creation
 # BASH script to add an SSH user
 # By Nicholas Grogg
-# Revision: 20260821
+# Revision: 20260918
 
 # Set exit on error
 set -e
@@ -18,9 +18,8 @@ yellow=$(tput setaf 3)
 ## Set text back to standard terminal font
 normal=$(tput sgr0)
 
-
 # Help function
-function helpFunction(){
+function help_function(){
     printf "%s\n" \
     "Help" \
     "----------------------------------------------------" \
@@ -33,13 +32,13 @@ function helpFunction(){
     "* Pass admin for sudo permissions" \
     "* Creates non-admin user otherwise " \
     "* Run as root or with sudo" \
-    "Usage. ./userCreation.sh add jdoe" \
-    "Usage. ./userCreation.sh add jdoe admin" \
+    "Usage. ./user-creation.sh add jdoe" \
+    "Usage. ./user-creation.sh add jdoe admin" \
     " "
 }
 
 # Function to run program
-function runProgram(){
+function run_program(){
     printf "%s\n" \
     "Add" \
     "----------------------------------------------------"
@@ -50,9 +49,9 @@ function runProgram(){
 
     #### Check if Admin value was passed
     if [[ $2 =~ [Aa]+[Dd]+[Mm]+[Ii]+[Nn] ]]; then
-            local addAdmin="yes"
+            local add_admin="yes"
     else
-            local addAdmin="no"
+            local add_admin="no"
     fi
 
     ### Validate user input
@@ -94,11 +93,11 @@ function runProgram(){
     "${yellow}IMPORTANT: Value Confirmation" \
     "----------------------------------------------------" \
     "Username to add: " "$username" \
-    "Should user be admin?: " "$addAdmin" \
+    "Should user be admin?: " "$add_admin" \
     "If all clear, press enter to proceed or ctrl-c to cancel${normal}" \
     " "
 
-    read junkInput
+    read junk_input
 
     ### Add user
     useradd -m $username -s /usr/bin/bash
@@ -108,7 +107,7 @@ function runProgram(){
 
     ### Validate sudoer file if user created with sudo perms
     #### Add user to sudoer file
-    if [[ "$addAdmin" == "yes" ]]; then
+    if [[ "$add_admin" == "yes" ]]; then
            echo "$username ALL=(ALL) ALL" >> /etc/sudoers.d/clients
 
            ##### Check sudoer file for validity
@@ -153,14 +152,14 @@ case "$1" in
     printf "%s\n" \
     "Running Help function" \
     "----------------------------------------------------"
-    helpFunction
+    help_function
     exit
     ;;
 [Aa]dd)
     printf "%s\n" \
     "Running script" \
     "----------------------------------------------------"
-    runProgram "$2" "$3"
+    run_program "$2" "$3"
     ;;
 *)
     printf "%s\n" \
@@ -168,7 +167,7 @@ case "$1" in
     "----------------------------------------------------" \
     "Running help script and exiting." \
     "Re-run script with valid input${normal}"
-    helpFunction
+    help_function
     exit
     ;;
 esac

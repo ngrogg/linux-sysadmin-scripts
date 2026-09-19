@@ -3,6 +3,7 @@
 # Logger
 # BASH stub script to run secure_log_analyzer script and to store output to log file.
 # By Nicholas Grogg
+# Revision: 20260918
 
 # Create log dir if it doesn't exist
 if [[ ! -d /var/log/secure_log_analyzer ]]; then

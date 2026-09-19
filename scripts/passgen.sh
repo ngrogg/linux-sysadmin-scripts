@@ -3,7 +3,7 @@
 # Passgen
 # A BASH script to generate a random password based on date
 # By Nicholas Grogg
-# Revision: 20260821
+# Revision: 20260918
 
 # Set exit on error
 set -e

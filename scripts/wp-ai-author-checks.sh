@@ -3,7 +3,7 @@
 # WP AI Author Checks
 # BASH script to check for WordPress plugins with AI as the author
 # By Nicholas Grogg
-# Revision: 20260821
+# Revision: 20260918
 
 # Set exit on error
 set -e
@@ -19,7 +19,7 @@ yellow=$(tput setaf 3)
 normal=$(tput sgr0)
 
 # Help function
-function helpFunction(){
+function help_function(){
     printf "%s\n" \
     "Help" \
     "----------------------------------------------------" \
@@ -34,12 +34,12 @@ function helpFunction(){
     "* Requires WP CLI be installed" \
     "* Will install if it's not found" \
     " " \
-    "Usage. ./wpAIAuthorChecks.sh check /path/to/Docroot" \
-    "Ex. ./wpAIAuthorChecks.sh check /var/www/html"
+    "Usage. ./wp-ai-author-checks.sh check /path/to/Docroot" \
+    "Ex. ./wp-ai-author-checks.sh check /var/www/html"
 }
 
 # Function to run program
-function runProgram(){
+function run_program(){
     printf "%s\n" \
     "Check" \
     "----------------------------------------------------"
@@ -49,7 +49,7 @@ function runProgram(){
     local docroot="$1"
 
     ### Array of keywords to check for, expand as needed
-    local aiKeywordArray=(
+    local ai_keyword_array=(
             "Bard"
             "ChatGPT"
             "Chatsonic"
@@ -77,7 +77,7 @@ function runProgram(){
         "Running help function and exiting!${normal}" \
         " "
 
-        helpFunction
+        help_function
         exit 1
     else
         printf "%s\n" \
@@ -95,7 +95,7 @@ function runProgram(){
         "Running help function and exiting!${normal}" \
         " "
 
-        helpFunction
+        help_function
         exit 1
     else
         printf "%s\n" \
@@ -117,7 +117,7 @@ function runProgram(){
         "Running help function and exiting!${normal}" \
         " "
 
-        helpFunction
+        help_function
         exit 1
     else
         printf "%s\n" \
@@ -147,13 +147,13 @@ function runProgram(){
     ### Is WP CLI up to date? Update if not
     if [[ -f "/usr/bin/wp" ]]; then
         #### Get current version of wp
-        local currentVersion=$(wp --version | grep 'WP-CLI' | awk '{print $2}')
+        local current_version=$(wp --version | grep 'WP-CLI' | awk '{print $2}')
 
         #### Get latest version of wp-cli
-        local latestVersion=$(curl --silent "https://api.github.com/repos/wp-cli/wp-cli/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+        local latest_version=$(curl --silent "https://api.github.com/repos/wp-cli/wp-cli/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
 
         #### Compare variables, update if needed
-        if [[ "$currentVersion" != "$latestVersion" ]]; then
+        if [[ "$current_version" != "$latest_version" ]]; then
             printf "%s\n" \
             "WP-CLI out of date, updating "\
             "----------------------------------------------------" \
@@ -168,7 +168,7 @@ function runProgram(){
     fi
 
     ## Check sites, for each keyword in array defined above, grep for it as an Author in the matching extensions
-    for keyword in "${aiKeywordArray[@]}"; do
+    for keyword in "${ai_keyword_array[@]}"; do
         ### Output keyword, append to log
         echo $keyword
 
@@ -202,14 +202,14 @@ case "$1" in
     printf "%s\n" \
     "Running Help function" \
     "----------------------------------------------------"
-    helpFunction
+    help_function
     exit
     ;;
 [Cc]heck)
     printf "%s\n" \
     "Running script" \
     "----------------------------------------------------"
-    runProgram "$2"
+    run_program "$2"
     ;;
 *)
     printf "%s\n" \
@@ -217,7 +217,7 @@ case "$1" in
     "----------------------------------------------------" \
     "Running help script and exiting." \
     "Re-run script with valid input${normal}"
-    helpFunction
+    help_function
     exit
     ;;
 esac

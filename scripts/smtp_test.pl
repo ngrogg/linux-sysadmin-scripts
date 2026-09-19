@@ -6,25 +6,25 @@ use Net::SMTP;
 
 # Define mailhost variables
 ## Fill in the definitions as needed
-my $smtpServer   = 'SMTPHOST';
-my $smtpPort     = PORT;
-my $smtpUser     = 'SMTPUSER';
-my $smtpPassword = 'SMTPUSERPASS';
-my $smtpTo       = 'SMTPEMAILTO';
+my $smtp_server   = 'SMTPHOST';
+my $smtp_port     = PORT;
+my $smtp_user     = 'SMTPUSER';
+my $smtp_password = 'SMTPUSERPASS';
+my $smtp_to       = 'SMTPEMAILTO';
 
 # Define a mailhost, set values above
-$smtp = Net::SMTP->new($smtpServer,
-                    Port => $smtpPort,
+$smtp = Net::SMTP->new($smtp_server,
+                    Port => $smtp_port,
                     Timeout => 10,
                     Debug => 1);
 die "Could not connect to server!\n" unless $smtp;
 
 # Authorize user
-$smtp->auth($smtpUser, $smtpPassword);
+$smtp->auth($smtp_user, $smtp_password);
 
 # Define the 'from' and 'to'
-$smtp->mail($smtpUser);
-$smtp->recipient($smtpTo);
+$smtp->mail($smtp_user);
+$smtp->recipient($smtp_to);
 
 # Define the email headers
 ## Fill in the From/To

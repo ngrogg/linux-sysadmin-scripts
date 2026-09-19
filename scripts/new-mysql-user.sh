@@ -3,7 +3,7 @@
 # New MySQL User
 # BASH script for creating a new MySQL user
 # By Nicholas Grogg
-# Revision: 20260821
+# Revision: 20260918
 
 # Set exit on error
 set -e
@@ -15,7 +15,7 @@ yellow=$(tput setaf 3)
 normal=$(tput sgr0)
 
 # Help function
-function helpFunction(){
+function help_function(){
     printf "%s\n" \
     "Help" \
     "----------------------------------------------------" \
@@ -27,24 +27,24 @@ function helpFunction(){
     "* Create MySQL user" \
     "* Takes a username and IP as arguments" \
     "* Creates a username with near root permissions for management" \
-    "Usage. ./newMysqlUser.sh create username web_ip" \
+    "Usage. ./new-mysql-user.sh create username web_ip" \
     " " \
     "For remote database users use remote IP:" \
-    "Ex. ./newMysqlUser.sh create jdoe 10.138.1.2" \
+    "Ex. ./new-mysql-user.sh create jdoe 10.138.1.2" \
     " " \
     "For local database users use localhost for IP:" \
-    "Ex. ./newMysqlUser.sh create jdoe localhost"
+    "Ex. ./new-mysql-user.sh create jdoe localhost"
 }
 
 # Function to run program
-function runProgram(){
+function run_program(){
     printf "%s\n" \
     "Create" \
     "----------------------------------------------------"
 
     ## Variables
-    local databaseUser="$1"
-    local webIP="$2"
+    local database_user="$1"
+    local web_ip="$2"
 
     ## Validation
     ### Is script running as root?
@@ -82,7 +82,7 @@ function runProgram(){
     fi
 
     ### Check if database user was passed
-    if [[ -z "$databaseUser" ]]; then
+    if [[ -z "$database_user" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - A Database User wasn't passed!"  \
         "----------------------------------------------------" \
@@ -90,12 +90,12 @@ function runProgram(){
         "Running help function and exiting!${normal}" \
         " "
 
-        helpFunction
+        help_function
         exit 1
     fi
 
     ### Check if web IP was passed
-    if [[ -z "$webIP" ]]; then
+    if [[ -z "$web_ip" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - A Web IP wasn't passed!"  \
         "----------------------------------------------------" \
@@ -103,7 +103,7 @@ function runProgram(){
         "Running help function and exiting!${normal}" \
         " "
 
-        helpFunction
+        help_function
         exit 1
     fi
 
@@ -111,22 +111,22 @@ function runProgram(){
     printf "%s\n" \
     "${yellow}IMPORTANT: Value Confirmation" \
     "----------------------------------------------------" \
-    "Database User: " "$databaseUser" \
-    "Web IP: " "$webIP" \
+    "Database User: " "$database_user" \
+    "Web IP: " "$web_ip" \
     "If all clear, press enter to proceed or ctrl-c to cancel${normal}" \
     " "
-    read junkInput
+    read junk_input
 
     ### Read in password
-    read -s -p "MySQL user being used to create new user: " creatorUser
+    read -s -p "MySQL user being used to create new user: " creator_user
 
     stty -echo
-    read -s -p "MySQL Password for user above: " creatorPass
+    read -s -p "MySQL Password for user above: " creator_pass
     stty echo
 
     ## Check if user exists
     ### Run query
-    local checkQuery=$(mysql -u root -p"$databasePass" -e "SELECT user,host FROM mysql.user WHERE user like \"$databaseUser\" AND host like \"$welshIP\"")
+    local checkQuery=$(mysql -u root -p"$databasePass" -e "SELECT user,host FROM mysql.user WHERE user like \"$database_user\" AND host like \"$welshIP\"")
 
     ### Check if checkQuery null or not, exit if so
     if [[ $checkQuery ]]; then
@@ -146,31 +146,31 @@ function runProgram(){
 
     ## Create user
     ### Generate a user password
-    local userPass=$(date +%s | sha256sum | base64 | head -c 30)
-    userPass+=$(((RANDOM%1000+1)))
-    userPass+="!"
+    local user_pass=$(date +%s | sha256sum | base64 | head -c 30)
+    user_pass+=$(((RANDOM%1000+1)))
+    user_pass+="!"
 
     #### Create user
-    mysql -u $creatorUser -p"$creatorPass" -e "CREATE USER $databaseUser@$webIP IDENTIFIED BY \"$userPass\""
+    mysql -u $creator_user -p"$creator_pass" -e "CREATE USER $database_user@$web_ip IDENTIFIED BY \"$user_pass\""
 
     ## Grant permissions
     ### Grant user permissions
-    mysql -u $creatorUser -p"$creatorPass" -e "GRANT ALL ON *.* TO $databaseUser@$webIP"
+    mysql -u $creator_user -p"$creator_pass" -e "GRANT ALL ON *.* TO $database_user@$web_ip"
 
     ### Flush Privileges
-    mysql -u $creatorUser -p"$creatorPass" -e "FLUSH PRIVILEGES"
+    mysql -u $creator_user -p"$creator_pass" -e "FLUSH PRIVILEGES"
 
     printf "%s\n" \
     "${yellow}IMPORTANT: User created" \
     "----------------------------------------------------" \
-    "Database User: $databaseUser" \
-    "Web IP:        $webIP" \
-    "Password:      $userPass" \
+    "Database User: $database_user" \
+    "Web IP:        $web_ip" \
+    "Password:      $user_pass" \
     " " \
     "Note user info, it will not be saved on the server!"
     "Press enter to proceed once info saved${normal}" \
     " "
-    read junkInput
+    read junk_input
 
 }
 
@@ -188,14 +188,14 @@ case "$1" in
     printf "%s\n" \
     "Running Help function" \
     "----------------------------------------------------"
-    helpFunction
+    help_function
     exit
     ;;
 [Cc]reate)
     printf "%s\n" \
     "Running script" \
     "----------------------------------------------------"
-    runProgram "$2" "$3"
+    run_program "$2" "$3"
     ;;
 *)
     printf "%s\n" \
@@ -203,7 +203,7 @@ case "$1" in
     "----------------------------------------------------" \
     "Running help script and exiting." \
     "Re-run script with valid input${normal}"
-    helpFunction
+    help_function
     exit
     ;;
 esac

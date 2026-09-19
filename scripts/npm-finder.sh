@@ -3,7 +3,10 @@
 # NPM Finder
 # BASH script to find npm installs and list modules
 # By Nicholas Grogg
-# Revision: 20260821
+# Revision: 20260918
+
+# Set exit on error
+set -e
 
 # Color variables
 ## Errors
@@ -16,7 +19,7 @@ yellow=$(tput setaf 3)
 normal=$(tput sgr0)
 
 # Help function
-function helpFunction(){
+function help_function(){
     printf "%s\n" \
     "Help" \
     "----------------------------------------------------" \
@@ -29,11 +32,11 @@ function helpFunction(){
     "* No arguments" \
     "* Script must be run as root or with sudo" \
     " " \
-    "Ex. ./npmFinder.sh check"
+    "Ex. ./npm-finder.sh check"
 }
 
 # Function to run program
-function runProgram(){
+function run_program(){
     printf "%s\n" \
     "Check" \
     "----------------------------------------------------"
@@ -77,10 +80,10 @@ function runProgram(){
     ###
     ### Hides any lingering permission or read errors.
     ### 2>/dev/null
-    local npmFilepaths=$(find / \( -path /proc -o -path /sys -o -path /dev -o -path /run \) -prune -o \( \( -type f -executable -name "npm" \) -o \( -type l -name "npm" \) \) -print 2>/dev/null)
+    local npm_filepaths=$(find / \( -path /proc -o -path /sys -o -path /dev -o -path /run \) -prune -o \( \( -type f -executable -name "npm" \) -o \( -type l -name "npm" \) \) -print 2>/dev/null)
 
     ## If no NPM instances found, exit
-    if [[ -z "$npmFilepaths" ]]; then
+    if [[ -z "$npm_filepaths" ]]; then
       printf "%s\n" \
       "No NPM installs found..." \
       "----------------------------------------------------" \
@@ -89,29 +92,29 @@ function runProgram(){
     fi
 
     ## Check each NPM path with for loop
-    for npmInstall in $npmFilepaths; do
+    for npm_install in $npm_filepaths; do
 
         ### Check if the found file is actually functional by requesting its version.
         ### Some arbitrary scripts might be named "npm", helps filter false positives
         ### 2>/dev/null to capture the output and discard errors.
-        npmVersion=$($npmInstall -v 2>/dev/null)
+        npm_version=$($npm_install -v 2>/dev/null)
 
-        ### If npmVersion is not empty, it's a valid npm instance
-        if [[ -n "$npmVersion" ]]; then
+        ### If npm_version is not empty, it's a valid npm instance
+        if [[ -n "$npm_version" ]]; then
             printf "%s\n" \
             "NPM Instance Information" \
             "----------------------------------------------------" \
-            "NPM Filepath: $npmInstall" \
-            "NPM Version:  $npmVersion" \
+            "NPM Filepath: $npm_install" \
+            "NPM Version:  $npm_version" \
             " " \
             "Packages: "
 
             #### Run 'npm list -g' using THIS specific executable.
             #### The '-g' flag lists the packages associated with this specific node/npm environment
             #### Use --depth=0 to keep the output readable by only showing top-level packages.
-            $npmInstall list -g --depth=0 2>/dev/null
+            $npm_install list -g --depth=0 2>/dev/null
             #### TODO: Remove --depth=0 to see the entire nested dependency tree.
-            #$npmInstall list -g 2>/dev/null
+            #$npm_install list -g 2>/dev/null
 
         fi
     done
@@ -137,14 +140,14 @@ case "$1" in
     printf "%s\n" \
     "Running Help function" \
     "----------------------------------------------------"
-    helpFunction
+    help_function
     exit
     ;;
 [Cc]heck)
     printf "%s\n" \
     "Running script" \
     "----------------------------------------------------"
-    runProgram
+    run_program
     ;;
 *)
     printf "%s\n" \
@@ -152,7 +155,7 @@ case "$1" in
     "----------------------------------------------------" \
     "Running help script and exiting." \
     "Re-run script with valid input${normal}"
-    helpFunction
+    help_function
     exit
     ;;
 esac

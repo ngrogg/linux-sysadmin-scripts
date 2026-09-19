@@ -3,7 +3,7 @@
 # User Removal
 # BASH script to remove an SSH user
 # By Nicholas Grogg
-# Revision: 20260821
+# Revision: 20260918
 
 # Set exit on error
 set -e
@@ -18,9 +18,8 @@ yellow=$(tput setaf 3)
 ## Set text back to standard terminal font
 normal=$(tput sgr0)
 
-
 # Help function
-function helpFunction(){
+function help_function(){
     printf "%s\n" \
     "Help" \
     "----------------------------------------------------" \
@@ -33,12 +32,12 @@ function helpFunction(){
     "* Pass home to remove home directory" \
     "* Leaves in place otherwise" \
     "* Run as root or with sudo perms" \
-    "Usage. ./userRemoval.sh remove jdoe " \
-    "Usage. ./userRemoval.sh remove jdoe home "
+    "Usage. ./user-removal.sh remove jdoe " \
+    "Usage. ./user-removal.sh remove jdoe home "
 }
 
 # Function to run program
-function runProgram(){
+function run_program(){
     printf "%s\n" \
     "Remove" \
     "----------------------------------------------------"
@@ -49,9 +48,9 @@ function runProgram(){
 
     #### Check if home argument was passed
     if [[ $2 =~ [Hh]+[Oo]+[Mm]+[Ee] ]]; then
-            local removeHome="Yes"
+            local remove_home="Yes"
     else
-            local removeHome="No"
+            local remove_home="No"
     fi
 
     ### Validate user input
@@ -99,14 +98,14 @@ function runProgram(){
     "${yellow}IMPORTANT: Value Confirmation" \
     "----------------------------------------------------" \
     "Username to remove: " "$username" \
-    "Remove home directory?: " "$removeHome" \
+    "Remove home directory?: " "$remove_home" \
     "If all clear, press enter to proceed or ctrl-c to cancel${normal}" \
     " "
 
-    read junkInput
+    read junk_input
 
     ### Remove user and home dir if specified
-    if [[ "$removeHome" == "Yes" ]]; then
+    if [[ "$remove_home" == "Yes" ]]; then
             userdel -r $username
     else
             userdel $username
@@ -128,14 +127,14 @@ case "$1" in
     printf "%s\n" \
     "Running Help function" \
     "----------------------------------------------------"
-    helpFunction
+    help_function
     exit
     ;;
 [Rr]emove)
     printf "%s\n" \
     "Running script" \
     "----------------------------------------------------"
-    runProgram "$2" "$3"
+    run_program "$2" "$3"
     ;;
 *)
     printf "%s\n" \
@@ -143,7 +142,7 @@ case "$1" in
     "----------------------------------------------------" \
     "Running help script and exiting." \
     "Re-run script with valid input${normal}"
-    helpFunction
+    help_function
     exit
     ;;
 esac

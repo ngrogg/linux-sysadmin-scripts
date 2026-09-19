@@ -3,7 +3,7 @@
 # Lock MySQL User
 # BASH script to lock a MySQL user
 # By Nicholas Grogg
-# Revision: 20260821
+# Revision: 20260918
 
 # Set exit on error
 set -e
@@ -20,7 +20,7 @@ normal=$(tput sgr0)
 
 
 # Help function
-function helpFunction(){
+function help_function(){
     printf "%s\n" \
     "Help" \
     "----------------------------------------------------" \
@@ -35,22 +35,22 @@ function helpFunction(){
     "* Can lock either remote or local database users" \
     " " \
     "For remote database users provide the remote IP:" \
-    "Usage. ./lockMysqlUser.sh lock username remoteIP " \
-    "Ex. ./lockMysqlUser.sh lock jdoe_root 10.138.1.2" \
+    "Usage. ./lock-mysql-user.sh lock username remote_ip " \
+    "Ex. ./lock-mysql-user.sh lock jdoe_root 10.138.1.2" \
     " " \
     "For local databases use localhost for IP:" \
-    "Ex. ./lockMysqlUser.sh lock jdoe_root localhost "
+    "Ex. ./lock-mysql-user.sh lock jdoe_root localhost "
 }
 
 # Function to run program
-function runProgram(){
+function run_program(){
     printf "%s\n" \
     "Lock" \
     "----------------------------------------------------"
 
     ## Variables
-    local databaseUser="$1"
-    local databaseIP="$2"
+    local database_user="$1"
+    local database_ip="$2"
 
     ## Validation
     ### Is script running as root?
@@ -88,7 +88,7 @@ function runProgram(){
     fi
 
     ### Check if database user was passed
-    if [[ -z "$databaseUser" ]]; then
+    if [[ -z "$database_user" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - A Database User wasn't passed!"  \
         "----------------------------------------------------" \
@@ -96,12 +96,12 @@ function runProgram(){
         "Running help function and exiting!${normal}" \
         " "
 
-        helpFunction
+        help_function
         exit 1
     fi
 
     ### Check if IP was passed
-    if [[ -z "$databaseIP" ]]; then
+    if [[ -z "$database_ip" ]]; then
         printf "%s\n" \
         "${red}ISSUE DETECTED - An IP wasn't passed!"  \
         "----------------------------------------------------" \
@@ -109,7 +109,7 @@ function runProgram(){
         "Running help function and exiting!${normal}" \
         " "
 
-        helpFunction
+        help_function
         exit 1
     fi
 
@@ -117,20 +117,20 @@ function runProgram(){
     printf "%s\n" \
     "${yellow}IMPORTANT: Value Confirmation" \
     "----------------------------------------------------" \
-    "Database User: $databaseUser" \
-    "Database IP:   $databaseIP" \
+    "Database User: $database_user" \
+    "Database IP:   $database_ip" \
     " " \
     "If all clear, press enter to proceed or ctrl-c to cancel${normal}" \
     " "
 
-    read junkInput
+    read junk_input
 
     ## Read in password quietly
-    read -s -p "Enter database user password: " databasePass
+    read -s -p "Enter database user password: " database_pass
 
     ## Check if user exists
     ### Run query
-    checkQuery=$(mysql -u root -p"$databasePass" -e "SELECT user,host FROM mysql.user WHERE user like \"$databaseUser\" AND host like \"$databaseIP\"")
+    checkQuery=$(mysql -u root -p"$database_pass" -e "SELECT user,host FROM mysql.user WHERE user like \"$database_user\" AND host like \"$database_ip\"")
 
     ### Check if checkQuery true or not, exit if not
     if [[ $checkQuery ]]; then
@@ -149,7 +149,7 @@ function runProgram(){
     fi
 
     ## Lock MySQL user
-    mysql -u root -p"$databasePass" -e "ALTER USER $databaseUser@$databaseIP ACCOUNT LOCK;"
+    mysql -u root -p"$database_pass" -e "ALTER USER $database_user@$database_ip ACCOUNT LOCK;"
 }
 
 # Main, read passed flags
@@ -166,14 +166,14 @@ case "$1" in
     printf "%s\n" \
     "Running Help function" \
     "----------------------------------------------------"
-    helpFunction
+    help_function
     exit
     ;;
 [Ll]ock)
     printf "%s\n" \
     "Running script" \
     "----------------------------------------------------"
-    runProgram "$2" "$3"
+    run_program "$2" "$3"
     ;;
 *)
     printf "%s\n" \
@@ -181,7 +181,7 @@ case "$1" in
     "----------------------------------------------------" \
     "Running help script and exiting." \
     "Re-run script with valid input${normal}"
-    helpFunction
+    help_function
     exit
     ;;
 esac
